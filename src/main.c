@@ -1,4 +1,5 @@
 #include "inputs.h"
+#include "graham.h"
 #include <time.h>
 
 
