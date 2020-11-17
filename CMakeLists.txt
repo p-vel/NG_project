@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.9)
 project(NGP C)
 
-set(EXEC myexec) # put whatever name you want for the executable 
+set(EXEC myexec) # put whatever name you want for the executable
 
 file(GLOB_RECURSE sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 add_executable(${EXEC}
                "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/inputs.c"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/graham.c"
+               "${CMAKE_CURRENT_SOURCE_DIR}/src/stack.c"
+               "${CMAKE_CURRENT_SOURCE_DIR}/src/utils.c"
                # you can add other source file here !
                )
 
