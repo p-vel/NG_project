@@ -3,69 +3,86 @@
 * Contains the functions needed to make a Graham scan
 */
 #define DEBUG_MODE  1
+#define ANIMATION_ON  1
+
 #include "graham.h"
 
-GLfloat xp, yp;  // Global variables (change ?)
+GLfloat xp, yp;  // Global variables
 
-int cmpfunc(const void *a, const void *b)
+int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
 {
-    // Casting the elements
-    GLfloat (*val1)[2] = (GLfloat (*)[2])a;
-    GLfloat (*val2)[2] = (GLfloat (*)[2])b;
-    // Getting the elems
-    GLfloat xa = *val1[0];
-    GLfloat xb = *val2[0];
-    GLfloat ya = *val1[1];
-    GLfloat yb = *val2[1];
-    // Dot products
-    GLfloat dota = xa*xp + ya*yp;
-    GLfloat dotb = xb*xp + yb*yp;
-    // Norms
-    GLfloat norma = sqrt(xa*xa + ya*ya);
-    GLfloat normb = sqrt(xb*xb + yb*yb);
-    GLfloat normp = sqrt(xp*xp + yp*yp);
-    // cosines
-    GLfloat cosa = dota/(norma*normp);
-    GLfloat cosb = dotb/(normb*normp);
-    // Compare
-    if (cosa > cosb) {
-        return -1;
+    GLfloat val = (q[1] - p[1]) * (r[0] - q[0]) -
+              (q[0] - p[0]) * (r[1] - q[1]);
+    if (val == 0.0) {
+        return 0;
     }
-    else if (cosa < cosb) {
+    else if (val > 0.0) {
         return 1;
     }
-    return 0;
+    else {
+        return 2;
+    }
 }
 
-void graham_scan(GLfloat points[][2], GLsizei n_points)
+int compare(const void *a, const void *b)
 {
-    // Find the minimum y-coordinate point
-    GLfloat y_min = points[0][1];
-    int y_index = 0;
+    // Appropriate casting
+    GLfloat (*val1)[2] = (GLfloat (*)[2])a;
+    GLfloat (*val2)[2] = (GLfloat (*)[2])b;
+    // Get the values
+    GLfloat P[2] = {xp, yp};
+    //
+    int val = orientation(P, *val1, *val2);
+    if (val == 2) {
+        return -1;
+    }
+
+    else if (val == 1) {
+        return 1;
+    }
+
+    else {
+        return 0;
+    }
+}
+
+void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat hull[][2])
+{
+    // Find the point with lowest y-coord
+    int min_index = 0;
+    GLfloat y_min = points[min_index][1];
     for (int i = 1; i < n_points; i++) {
-        if (points[i][1] == y_min && points[i][0] < points[y_index][0]) {
+        if (points[i][1] < y_min) {       // Ignoring same x for now
+            min_index = i;
             y_min = points[i][1];
-            y_index = i;
-        }
-        else if (points[i][1] < y_min) {
-            y_min = points[i][1];
-            y_index = i;
         }
     }
-#if DEBUG_MODE
-    printf("The minimal y index and value are: %d, %f\n", y_index, y_min);
-#endif
-    // Put y_min at the beginning of the array
-    GLfloat x0, y0;
-    x0 = points[0][0];
-    y0 = points[0][1];
-    xp = points[y_index][0];
-    yp = points[y_index][1];
-    points[0][0] = xp;
-    points[0][1] = yp;
-    points[y_index][0] = x0;
-    points[y_index][1] = y0;
-    // Sort
-    qsort(&(points[1]), n_points-1, sizeof(GLfloat[2]), cmpfunc);  // get the adress of the 2nd point
-
+    // Setting the global variables xp, yp
+    xp = points[min_index][0];
+    yp = points[min_index][1];
+    // Put this point at the beginning of the array
+    swap(0, min_index, points);
+    // Sorting
+    qsort(&points[1], n_points-1, sizeof(GLfloat[2]), compare);
+    // Main loop
+    struct stack *my_stack = newStack(n_points);
+    for (int i = 0; i < n_points; i++) {
+        while ((size(my_stack) > 1) && (orientation(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) != 2)) {
+            pop(my_stack);
+        }
+        push(my_stack, i);
+    }
+    // Retrieving the convex hull
+    int count = 0;
+    while (!isEmpty(my_stack)) {
+        int index = peek(my_stack);
+        pop(my_stack);
+        GLfloat x_hull = points[index][0];
+        GLfloat y_hull = points[index][1];
+        hull[count][0] = x_hull;
+        hull[count][1] = y_hull;
+        count++;
+    }
+    *hull_size = count;
+    delete(my_stack);
 }
