@@ -11,8 +11,7 @@ GLfloat xp, yp;  // Global variables
 
 int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
 {
-    GLfloat val = (q[1] - p[1]) * (r[0] - q[0]) -
-              (q[0] - p[0]) * (r[1] - q[1]);
+    GLfloat val = orient2d(p, q, r);
     if (val == 0.0) {
         return 0;
     }
