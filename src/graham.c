@@ -6,13 +6,13 @@
 #define ANIMATION_ON  1
 
 #include "graham.h"
+#include "predicates.c"
 
 GLfloat xp, yp;  // Global variables
 
-int orientation(double p[2], double q[2], double r[2])
+int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
 {
-    //printf("orient2dfast = %f\n", orient2dfast(p, q, r));
-    double val = orient2dfast(p, q, r);
+    GLfloat val = -orient2d(p, q, r);
     if (val == 0.0) {
         return 0;
     }
@@ -24,13 +24,13 @@ int orientation(double p[2], double q[2], double r[2])
     }
 }
 
-int compare(const void *a, const void *b)
+int compare(const void* a, const void* b)
 {
     // Appropriate casting
-    GLfloat (*val1)[2] = (GLfloat (*)[2])a;
-    GLfloat (*val2)[2] = (GLfloat (*)[2])b;
+    GLfloat(*val1)[2] = (GLfloat(*)[2])a;
+    GLfloat(*val2)[2] = (GLfloat(*)[2])b;
     // Get the values
-    GLfloat P[2] = {xp, yp};
+    GLfloat P[2] = { xp, yp };
     //
     int val = orientation(P, *val1, *val2);
     if (val == 2) {
@@ -46,7 +46,7 @@ int compare(const void *a, const void *b)
     }
 }
 
-void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat hull[][2])
+void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
 {
     // Find the point with lowest y-coord
     int min_index = 0;
@@ -63,9 +63,9 @@ void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat 
     // Put this point at the beginning of the array
     swap(0, min_index, points);
     // Sorting
-    qsort(&points[1], n_points-1, sizeof(GLfloat[2]), compare);
+    qsort(&points[1], n_points - 1, sizeof(GLfloat[2]), compare);
     // Main loop
-    struct stack *my_stack = newStack(n_points);
+    struct stack* my_stack = newStack(n_points);
     for (int i = 0; i < n_points; i++) {
         while ((size(my_stack) > 1) && (orientation(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) != 2)) {
             pop(my_stack);

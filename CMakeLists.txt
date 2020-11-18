@@ -10,7 +10,7 @@ add_executable(${EXEC}
                "${CMAKE_CURRENT_SOURCE_DIR}/src/graham.c"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/stack.c"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/utils.c"
-	       "${CMAKE_CURRENT_SOURCE_DIR}/src/predicates.c"
+	       #"${CMAKE_CURRENT_SOURCE_DIR}/src/predicates.c"
                # you can add other source file here !
                )
 
