@@ -9,9 +9,10 @@
 
 GLfloat xp, yp;  // Global variables
 
-int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
+int orientation(double p[2], double q[2], double r[2])
 {
-    GLfloat val = orient2d(p, q, r);
+    //printf("orient2dfast = %f\n", orient2dfast(p, q, r));
+    double val = orient2dfast(p, q, r);
     if (val == 0.0) {
         return 0;
     }

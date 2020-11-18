@@ -5,6 +5,13 @@
 
 int main()
 {
+	exactinit();
+	double a[2] = { 2.,2. };
+	double b[2] = { 12.,12. };
+	double c[2] = { 24.,24. };
+
+	double val = orient2d(a, b, c);
+	printf("main_orientation=%f\n", val);
 	// give a bit of entropy for the seed of rand()
 	// or it will always be the same sequence
 	int seed = (int) time(NULL);
