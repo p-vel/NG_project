@@ -53,7 +53,16 @@ void random_points(GLfloat coord[][2], GLsizei n)
 	free(sigma);
 }
 
-
+void circle_points(GLfloat coord[][2], GLsizei n)
+{
+	GLfloat radius = 1.0;
+	GLfloat theta = 0.0;
+	for (GLsizei i = 0; i < n; i++) {
+		coord[i][0] = radius*cos(theta);
+		coord[i][1] = radius*sin(theta);
+		theta += 2*M_PI/n;
+	}
+}
 // see https://stackoverflow.com/questions/16542042
 static inline GLfloat pseudoangle(GLfloat dx, GLfloat dy)
 {
