@@ -10,9 +10,11 @@
 
 GLfloat xp, yp;  // Global variables
 
+/*
 int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
 {
     GLfloat val = -orient2d(p, q, r);
+    return val == 0 ? 0 : val > 0 ? 1 : 2;
     if (val == 0.0) {
         return 0;
     }
@@ -22,7 +24,7 @@ int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
     else {
         return 2;
     }
-}
+}*/
 
 int compare(const void* a, const void* b)
 {
@@ -32,18 +34,8 @@ int compare(const void* a, const void* b)
     // Get the values
     GLfloat P[2] = { xp, yp };
     //
-    int val = orientation(P, *val1, *val2);
-    if (val == 2) {
-        return -1;
-    }
-
-    else if (val == 1) {
-        return 1;
-    }
-
-    else {
-        return 0;
-    }
+    GLfloat val = -orient2d(P, *val1, *val2);
+    return val == 0 ? 0 : val > 0 ? 1 : -1;
 }
 
 void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
@@ -67,7 +59,7 @@ void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat 
     // Main loop
     struct stack* my_stack = newStack(n_points);
     for (int i = 0; i < n_points; i++) {
-        while ((size(my_stack) > 1) && (orientation(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) != 2)) {
+        while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) <= 0)) {
             pop(my_stack);
         }
         push(my_stack, i);
