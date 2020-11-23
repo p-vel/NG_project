@@ -1,63 +1,79 @@
 #include "inputs.h"
 #include "graham.h"
 #include <time.h>
-#define ANIMATION_ON 1
-#define SHOW_INFO 1
+
+// Global vars
+GLfloat (*my_points)[2];
+int count;
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+		double xpos, ypos;
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+    	glfwGetCursorPos(window, &xpos, &ypos);
+			if (count < 10) {
+				my_points[count][0] = (GLfloat)xpos/800.0-0.5; // cursor coords != pixel coords
+				my_points[count][1] = -(GLfloat)ypos/800.0+0.5;
+				count++;
+			}
+			else if (count == 10) {
+				printf("sorry can't add more points\n");
+			}
+	}
+}
+
 int main()
 {
-	// give a bit of entropy for the seed of rand()
-	// or it will always be the same sequence
-	int seed = (int) time(NULL);
-	srand(seed);
-
-	// we print the seed so you can get the distribution of points back
-	printf("seed=%d\n", seed);
-#if ANIMATION_ON
-	bov_window_t* window = bov_window_new(800, 800, "Hello there");
-	bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
-#endif
-
-	const GLsizei nPoints = 100;
-	GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
-	GLfloat (*my_hull)[2] = malloc(sizeof(my_hull[0])*nPoints);
-	int my_hull_size;
-	// random_points(coord, nPoints);
-	circle_points(coord, nPoints);
-
-	clock_t t0 = clock();
-  graham_scan(coord, nPoints, &my_hull_size, my_hull);
-	clock_t t1 = clock();
-	double elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
-
-#if SHOW_INFO
-	printf("#################################################\n");
-	printf("###              GRAHAM's SCAN                ###\n");
-	printf("\n");
-	printf("The number of points: %d\n", nPoints);
-	printf("The convex hull consists of: %d points\n", my_hull_size);
-	printf("The elapsed time is %.6f seconds.\n", elapsed_time);
-	printf("#################################################\n");
-#endif
-    // Initialized points object
-#if ANIMATION_ON
-	bov_points_t *coordDraw = bov_points_new(coord, nPoints, GL_STATIC_DRAW);
-	bov_points_t *hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
-	bov_points_set_color(coordDraw, (GLfloat[4]) {0.0, 0.0, 0.0, 1.0});
-	bov_points_set_color(hullDraw, (GLfloat[4]) {1.0, 0.0, 0.0, 1.0});
-	bov_points_set_outline_color(coordDraw, (GLfloat[4]) {0.3, 0.12, 0.0, 0.25});
-
-	while(!bov_window_should_close(window)){
-		bov_points_draw(window, coordDraw, 0, nPoints);
-		bov_points_draw(window, hullDraw, 0, my_hull_size);
-		bov_fast_line_loop_draw(window, hullDraw, 0, my_hull_size);
+	// Create the window
+	bov_window_t *window = bov_window_new(800, 800, "Hello there");
+	// Init. some graphical objects
+	bov_text_t* hw_obj = bov_text_new((GLubyte[]) {"General Kenobi...."}, GL_DYNAMIC_DRAW);
+	bov_text_set_pos(hw_obj, (GLfloat[2]) {-1.0, 0.9});
+	// Init point array
+	my_points = malloc(sizeof(my_points[0])*10);
+	my_points[0][0] = 0.0;
+	my_points[0][1] = 0.0;
+	bov_points_t *pointsDraw = bov_points_new(my_points, 10, GL_DYNAMIC_DRAW);
+	// Some vars
+	double x, y;
+	int state;
+	count = 1;
+	// Main loop
+	while (!bov_window_should_close(window)) {
+		glfwSetMouseButtonCallback(window->self, mouse_button_callback);
+		// get cursor position
+		glfwGetCursorPos(window->self, &x, &y);
+		// Detects left-clicks
+		// state = glfwGetMouseButton(window->self, GLFW_MOUSE_BUTTON_LEFT);
+		// if (state == GLFW_PRESS) {
+		// 	if (count < 10) {
+		// 		my_points[count][0] = (GLfloat)x/800.0; // cursor coords != pixel coords
+		// 		my_points[count][1] = (GLfloat)y/800.0;
+		// 		count++;
+		// 	}
+		// 	else {
+		// 		printf("Sorry, can't add more points\n");
+		// 	}
+		// }
+		// init. the message to print
+    GLubyte str[2];
+		sprintf(str, "Cursor pos. : (%f, %f)", x, y);
+		hw_obj = bov_text_update(hw_obj, str);
+    bov_text_draw(window, hw_obj);
+		// points
+		bov_points_partial_update(pointsDraw, my_points, 0, count, 0);
+		bov_points_draw(window, pointsDraw, 0, count);
+		// update
 		bov_window_update(window);
 	}
-
-	bov_points_delete(coordDraw);
-	bov_points_delete(hullDraw);
+	for (int i = 0; i < 10; i++) {
+		printf("%f, %f\n", my_points[i][0], my_points[i][1]);
+	}
+	// Free memory
+	bov_text_delete(hw_obj);
+	bov_points_delete(pointsDraw);
 	bov_window_delete(window);
-#endif
-	free(coord);
-	free(my_hull);
+	free(my_points);
 	return EXIT_SUCCESS;
 }
