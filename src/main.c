@@ -1,6 +1,7 @@
 #include "inputs.h"
 #include "graham.h"
 #include <time.h>
+#include "myScan.h"
 #define ANIMATION_ON 1
 #define SHOW_INFO 1
 int main()
@@ -17,12 +18,14 @@ int main()
 	bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
 #endif
 
-	const GLsizei nPoints = 100;
+	
+	const GLsizei nPoints = 28194;
 	GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
 	GLfloat (*my_hull)[2] = malloc(sizeof(my_hull[0])*nPoints);
 	int my_hull_size;
 	// random_points(coord, nPoints);
-	circle_points(coord, nPoints);
+	//circle_points(coord, nPoints);
+	coord = scanFile("../JackieChan.txt");
 
 	clock_t t0 = clock();
   graham_scan(coord, nPoints, &my_hull_size, my_hull);
@@ -49,7 +52,7 @@ int main()
 	while(!bov_window_should_close(window)){
 		bov_points_draw(window, coordDraw, 0, nPoints);
 		bov_points_draw(window, hullDraw, 0, my_hull_size);
-		bov_fast_line_loop_draw(window, hullDraw, 0, my_hull_size);
+		//bov_fast_line_loop_draw(window, hullDraw, 0, my_hull_size);
 		bov_window_update(window);
 	}
 
