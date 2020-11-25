@@ -28,6 +28,7 @@ int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
 
 int compare(const void* a, const void* b)
 {
+    exactinit();
     // Appropriate casting
     GLfloat(*val1)[2] = (GLfloat(*)[2])a;
     GLfloat(*val2)[2] = (GLfloat(*)[2])b;
@@ -40,6 +41,7 @@ int compare(const void* a, const void* b)
 
 void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
 {
+    exactinit();
     // Find the point with lowest y-coord
     int min_index = 0;
     GLfloat y_min = points[min_index][1];

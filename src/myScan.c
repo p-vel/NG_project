@@ -1,7 +1,7 @@
 #include "myScan.h"
 
 
-GLfloat** scanFile(const char* filename) {
+GLfloat** scanFile(const char* filename, int* nPoints) {
 
     FILE* myfile;
 
@@ -18,6 +18,7 @@ GLfloat** scanFile(const char* filename) {
     }
     fclose(myfile);
 
+    *nPoints = size;
     return coord;
 
 }

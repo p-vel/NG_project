@@ -6,6 +6,6 @@
 #ifndef MY_SCAN
 #define MY_SCAN
 
-GLfloat** scanFile(const char* filename);
+GLfloat** scanFile(const char* filename, int* nPoints);
 
 #endif

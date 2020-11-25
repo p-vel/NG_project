@@ -6,6 +6,7 @@
 #define SHOW_INFO 1
 int main()
 {
+	exactinit();
 	// give a bit of entropy for the seed of rand()
 	// or it will always be the same sequence
 	int seed = (int) time(NULL);
@@ -18,18 +19,19 @@ int main()
 	bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
 #endif
 
-	
-	const GLsizei nPoints = 28194;
-	GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
+	GLsizei nPoints;
+	GLfloat(*coord)[2] = scanFile("../JackieChanWTF.txt", &nPoints);
+	for (int i = 0; i < nPoints; i++) {
+		coord[i][0] = coord[i][0] / 256. - 1.;
+		coord[i][1] = coord[i][1] / 256. - 1;
+	}
+	//const GLsizei nPoints = 28194;
+	//GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
 	GLfloat (*my_hull)[2] = malloc(sizeof(my_hull[0])*nPoints);
 	int my_hull_size;
 	// random_points(coord, nPoints);
 	//circle_points(coord, nPoints);
-	coord = scanFile("../JackieChan.txt");
-	for (int i = 0; i < nPoints; i++) {
-		coord[i][0] = coord[i][0] / 500. - 1.;
-		coord[i][1] = coord[i][1] / 500. - 1;
-	}
+
 
 	clock_t t0 = clock();
   graham_scan(coord, nPoints, &my_hull_size, my_hull);
@@ -49,15 +51,16 @@ int main()
 #if ANIMATION_ON
 	bov_points_t *coordDraw = bov_points_new(coord, nPoints, GL_STATIC_DRAW);
 	bov_points_t *hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
-	bov_points_set_width(coordDraw, .002);
+	bov_points_set_width(coordDraw, .001);
+	bov_points_set_width(hullDraw, .002);
 	bov_points_set_color(coordDraw, (GLfloat[4]) {0.0, 0.0, 0.0, 1.0});
 	bov_points_set_color(hullDraw, (GLfloat[4]) {1.0, 0.0, 0.0, 1.0});
 	bov_points_set_outline_color(coordDraw, (GLfloat[4]) {0.3, 0.12, 0.0, 0.25});
 
 	while(!bov_window_should_close(window)){
 		bov_points_draw(window, coordDraw, 0, nPoints);
-		//bov_points_draw(window, hullDraw, 0, my_hull_size);
-		//bov_fast_line_loop_draw(window, hullDraw, 0, my_hull_size);
+		bov_points_draw(window, hullDraw, 0, my_hull_size);
+		bov_fast_line_loop_draw(window, hullDraw, 0, my_hull_size);
 		bov_window_update(window);
 	}
 
