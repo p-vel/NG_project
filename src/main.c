@@ -7,34 +7,47 @@
 int main()
 {
 	exactinit();
-	// give a bit of entropy for the seed of rand()
-	// or it will always be the same sequence
-	int seed = (int) time(NULL);
-	srand(seed);
 
-	// we print the seed so you can get the distribution of points back
-	printf("seed=%d\n", seed);
 #if ANIMATION_ON
-	bov_window_t* window = bov_window_new(800, 800, "Hello there");
+	bov_window_t* window = bov_window_new(800, 800, "Hello there Jackie");
 	bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
 #endif
-
+	
+	// ##### Jackie w/ heuristic ###### 
 	GLsizei nPoints;
-	GLfloat(*coord)[2] = scanFile("../JackieChanWTF.txt", &nPoints);
+	GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
+	GLfloat(*coord_cut)[2] = malloc(sizeof(coord[0]) * nPoints);
+	int rem_points;
+	
+	float scaling = 500.;
 	for (int i = 0; i < nPoints; i++) {
-		coord[i][0] = coord[i][0] / 256. - 1.;
-		coord[i][1] = coord[i][1] / 256. - 1;
+		coord[i][0] = coord[i][0] / scaling - 1.;
+		coord[i][1] = coord[i][1] / scaling - 1.;
+		coord_cut[i][0] = coord[i][0];
+		coord_cut[i][1] = coord[i][1];
 	}
-	//const GLsizei nPoints = 28194;
-	//GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
-	GLfloat (*my_hull)[2] = malloc(sizeof(my_hull[0])*nPoints);
-	int my_hull_size;
+
+	// ##### Circle or random #####
+	// const GLsizei nPoints = 28194;
+	// GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
+	//	// give a bit of entropy for the seed of rand()
+	//	// or it will always be the same sequence
+	// int seed = (int)time(NULL);
+	// srand(seed);
+	//	// we print the seed so you can get the distribution of points back
+	// printf("seed=%d\n", seed);
 	// random_points(coord, nPoints);
-	//circle_points(coord, nPoints);
+	// circle_points(coord, nPoints);
+
+	// Allocate hull...	
+	GLfloat(*my_hull)[2] = malloc(sizeof(my_hull[0]) * nPoints);
+	int my_hull_size;
 
 
 	clock_t t0 = clock();
-  graham_scan(coord, nPoints, &my_hull_size, my_hull);
+  akl_toussaint(coord_cut, nPoints, &rem_points);
+  graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);
+  // graham_scan(coord, nPoints, &my_hull_size, my_hull);
 	clock_t t1 = clock();
 	double elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
 
@@ -49,16 +62,19 @@ int main()
 #endif
     // Initialized points object
 #if ANIMATION_ON
-	bov_points_t *coordDraw = bov_points_new(coord, nPoints, GL_STATIC_DRAW);
-	bov_points_t *hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
-	bov_points_set_width(coordDraw, .001);
-	bov_points_set_width(hullDraw, .002);
-	bov_points_set_color(coordDraw, (GLfloat[4]) {0.0, 0.0, 0.0, 1.0});
-	bov_points_set_color(hullDraw, (GLfloat[4]) {1.0, 0.0, 0.0, 1.0});
-	bov_points_set_outline_color(coordDraw, (GLfloat[4]) {0.3, 0.12, 0.0, 0.25});
+	bov_points_t* coordDraw = bov_points_new(coord, nPoints, GL_STATIC_DRAW);
+	bov_points_t* coord_cutDraw = bov_points_new(coord_cut, nPoints, GL_STATIC_DRAW);
+	bov_points_t* hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
+	bov_points_set_width(coordDraw, .002);
+	bov_points_set_width(coord_cutDraw, .002);
+	bov_points_set_color(coordDraw, (GLfloat[4]) { 0.0, 0.0, 0.0, 1.0 });
+	bov_points_set_color(coord_cutDraw, (GLfloat[4]) { 0.0, 0.0, 1.0, 1.0 });
+	bov_points_set_color(hullDraw, (GLfloat[4]) { 1.0, 0.0, 0.0, 1.0 });
+	bov_points_set_outline_color(coordDraw, (GLfloat[4]) { 0.3, 0.12, 0.0, 0.25 });
 
-	while(!bov_window_should_close(window)){
+	while (!bov_window_should_close(window)) {
 		bov_points_draw(window, coordDraw, 0, nPoints);
+		bov_points_draw(window, coord_cutDraw, 0, rem_points);
 		bov_points_draw(window, hullDraw, 0, my_hull_size);
 		bov_fast_line_loop_draw(window, hullDraw, 0, my_hull_size);
 		bov_window_update(window);
@@ -66,9 +82,11 @@ int main()
 
 	bov_points_delete(coordDraw);
 	bov_points_delete(hullDraw);
+	bov_points_delete(coord_cutDraw);
 	bov_window_delete(window);
 #endif
 	free(coord);
+	free(coord_cut);
 	free(my_hull);
 	return EXIT_SUCCESS;
 }

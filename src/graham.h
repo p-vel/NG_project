@@ -16,6 +16,6 @@
 //GLfloat* grahamScan();
 void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat hull[][2]);
 int compare(const void *a, const void *b);
-int ccw(GLfloat a[2], GLfloat b[2], GLfloat c[2]);
+void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points);
 
 #endif

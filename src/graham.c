@@ -10,22 +10,6 @@
 
 GLfloat xp, yp;  // Global variables
 
-/*
-int orientation(GLfloat p[2], GLfloat q[2], GLfloat r[2])
-{
-    GLfloat val = -orient2d(p, q, r);
-    return val == 0 ? 0 : val > 0 ? 1 : 2;
-    if (val == 0.0) {
-        return 0;
-    }
-    else if (val > 0.0) {
-        return 1;
-    }
-    else {
-        return 2;
-    }
-}*/
-
 int compare(const void* a, const void* b)
 {
     exactinit();
@@ -37,6 +21,53 @@ int compare(const void* a, const void* b)
     //
     GLfloat val = -orient2d(P, *val1, *val2);
     return val == 0 ? 0 : val > 0 ? 1 : -1;
+}
+
+void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
+{
+    exactinit();
+    // Setting vars
+    int y_min_idx = 0;
+    int y_max_idx = 0;
+    int x_min_idx = 0;
+    int x_max_idx = 0;
+    GLfloat y_min = points[0][1];
+    GLfloat y_max = points[0][1];
+    GLfloat x_min = points[0][0];
+    GLfloat x_max = points[0][0];
+    // Finding the min. values
+    for (int i = 1; i < n_points; i++) {
+        if (points[i][0] < x_min) {
+            x_min = points[i][0];
+            x_min_idx = i;
+        }
+        if (points[i][0] > x_max) {
+            x_max = points[i][0];
+            x_max_idx = i;
+        }
+        if (points[i][1] < y_min) {
+            y_min = points[i][1];
+            y_min_idx = i;
+        }
+        if (points[i][1] > y_max) {
+            y_max = points[i][1];
+            y_max_idx = i;
+        }
+    }
+    // Discard points
+    *rem_points = 0;
+    for (int i = 0; i < n_points; i++) {
+        GLfloat NW = orient2d(points[x_min_idx], points[y_max_idx], points[i]);
+        GLfloat NE = orient2d(points[y_max_idx], points[x_max_idx], points[i]);
+        GLfloat SE = orient2d(points[x_max_idx], points[y_min_idx], points[i]);
+        GLfloat SW = orient2d(points[y_min_idx], points[x_min_idx], points[i]);
+
+        if (((NW >= 0.0) || (NE >= 0.0) || (SE >= 0.0) || (SW >= 0.0))) {
+            points[*rem_points][0] = points[i][0];
+            points[*rem_points][1] = points[i][1];
+            (*rem_points)++;
+        }
+    }
 }
 
 void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
