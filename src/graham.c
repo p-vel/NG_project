@@ -14,13 +14,25 @@ int compare(const void* a, const void* b)
 {
     exactinit();
     // Appropriate casting
-    GLfloat(*val1)[2] = (GLfloat(*)[2])a;
-    GLfloat(*val2)[2] = (GLfloat(*)[2])b;
-    // Get the values
-    GLfloat P[2] = { xp, yp };
-    //
-    GLfloat val = -orient2d(P, *val1, *val2);
-    return val == 0 ? 0 : val > 0 ? 1 : -1;
+    GLfloat* val1 = (GLfloat**)a;
+    GLfloat* val2 = (GLfloat**)b;
+
+    GLfloat val = -orient2d((GLfloat[2]) { xp, yp }, val1, val2);
+
+    if (val == 0) {
+        GLfloat dx1 = val1[0] - xp;
+        GLfloat dy1 = val1[1] - yp;
+        GLfloat dx2 = val2[0] - xp;
+        GLfloat dy2 = val2[1] - yp;
+        if (dx1 * dx1 + dy1 * dy1 > dx2 * dx2 + dy2 * dy2)
+            return 1;
+        else if (dx1 * dx1 + dy1 * dy1 < dx2 * dx2 + dy2 * dy2)
+            return -1;
+        else
+            return 0;
+    }
+
+    return val > 0 ? 1 : -1;
 }
 
 void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
@@ -55,14 +67,19 @@ void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
         }
     }
     // Discard points
-    *rem_points = 0;
+    
+    GLfloat point_x_min[2] = { points[x_min_idx][0],points[x_min_idx][1] };
+    GLfloat point_x_max[2] = { points[x_max_idx][0],points[x_max_idx][1] };
+    GLfloat point_y_min[2] = { points[y_min_idx][0],points[y_min_idx][1] };
+    GLfloat point_y_max[2] = { points[y_max_idx][0],points[y_max_idx][1] };
+    *rem_points = 0;    
     for (int i = 0; i < n_points; i++) {
-        GLfloat NW = orient2d(points[x_min_idx], points[y_max_idx], points[i]);
-        GLfloat NE = orient2d(points[y_max_idx], points[x_max_idx], points[i]);
-        GLfloat SE = orient2d(points[x_max_idx], points[y_min_idx], points[i]);
-        GLfloat SW = orient2d(points[y_min_idx], points[x_min_idx], points[i]);
+        GLfloat NW = orient2d(point_x_min, points[i], point_y_max);
+        GLfloat NE = orient2d(point_y_max, points[i], point_x_max);
+        GLfloat SE = orient2d(point_x_max, points[i], point_y_min);
+        GLfloat SW = orient2d(point_y_min, points[i], point_x_min);
 
-        if (((NW >= 0.0) || (NE >= 0.0) || (SE >= 0.0) || (SW >= 0.0))) {
+        if (((NW <= 0.0) || (NE <= 0.0) || (SW <= 0.0) || (SE <= 0.0))) {
             points[*rem_points][0] = points[i][0];
             points[*rem_points][1] = points[i][1];
             (*rem_points)++;
@@ -92,7 +109,7 @@ void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat 
     // Main loop
     struct stack* my_stack = newStack(n_points);
     for (int i = 0; i < n_points; i++) {
-        while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) <= 0)) {
+        while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) < 0)) {
             pop(my_stack);
         }
         push(my_stack, i);

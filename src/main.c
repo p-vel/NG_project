@@ -18,8 +18,8 @@ int main()
 	GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
 	GLfloat(*coord_cut)[2] = malloc(sizeof(coord[0]) * nPoints);
 	int rem_points;
-	
-	float scaling = 500.;
+	// random_points(coord, nPoints);
+	float scaling = 1.;
 	for (int i = 0; i < nPoints; i++) {
 		coord[i][0] = coord[i][0] / scaling - 1.;
 		coord[i][1] = coord[i][1] / scaling - 1.;
@@ -65,10 +65,11 @@ int main()
 	bov_points_t* coordDraw = bov_points_new(coord, nPoints, GL_STATIC_DRAW);
 	bov_points_t* coord_cutDraw = bov_points_new(coord_cut, nPoints, GL_STATIC_DRAW);
 	bov_points_t* hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
-	bov_points_set_width(coordDraw, .002);
-	bov_points_set_width(coord_cutDraw, .002);
+	bov_points_set_width(coordDraw, .001);
+	bov_points_set_width(coord_cutDraw, .05);
+	bov_points_set_width(hullDraw, .01);
 	bov_points_set_color(coordDraw, (GLfloat[4]) { 0.0, 0.0, 0.0, 1.0 });
-	bov_points_set_color(coord_cutDraw, (GLfloat[4]) { 0.0, 0.0, 1.0, 1.0 });
+	bov_points_set_color(coord_cutDraw, (GLfloat[4]) { 0.0, 1.0, 0.0, 1.0 });
 	bov_points_set_color(hullDraw, (GLfloat[4]) { 1.0, 0.0, 0.0, 1.0 });
 	bov_points_set_outline_color(coordDraw, (GLfloat[4]) { 0.3, 0.12, 0.0, 0.25 });
 
