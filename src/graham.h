@@ -12,6 +12,7 @@
 #include "utils.h"
 #include <time.h>
 #include "inputs.h"
+#include "predicates.h"
 
 //GLfloat* grahamScan();
 void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat hull[][2]);

@@ -6,13 +6,13 @@
 #define ANIMATION_ON  1
 
 #include "graham.h"
-#include "predicates.c"
+#include "predicates.h"
 
 GLfloat xp, yp;  // Global variables
 
 int compare(const void* a, const void* b)
 {
-    exactinit();
+    //exactinit();
     // Appropriate casting
     GLfloat* val1 = (GLfloat**)a;
     GLfloat* val2 = (GLfloat**)b;

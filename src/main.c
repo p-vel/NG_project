@@ -2,6 +2,7 @@
 #include "graham.h"
 #include <time.h>
 #include "myScan.h"
+#include "jarvis.h"
 #define ANIMATION_ON 1
 #define SHOW_INFO 1
 int main()
@@ -19,7 +20,7 @@ int main()
 	GLfloat(*coord_cut)[2] = malloc(sizeof(coord[0]) * nPoints);
 	int rem_points;
 	// random_points(coord, nPoints);
-	float scaling = 1.;
+	float scaling = 500.;
 	for (int i = 0; i < nPoints; i++) {
 		coord[i][0] = coord[i][0] / scaling - 1.;
 		coord[i][1] = coord[i][1] / scaling - 1.;
@@ -46,7 +47,9 @@ int main()
 
 	clock_t t0 = clock();
   akl_toussaint(coord_cut, nPoints, &rem_points);
-  graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);
+  jarvis_march(coord_cut, rem_points, &my_hull_size, my_hull);
+  //jarvis_march(coord, nPoints, &my_hull_size, my_hull);
+  // graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);
   // graham_scan(coord, nPoints, &my_hull_size, my_hull);
 	clock_t t1 = clock();
 	double elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
@@ -66,7 +69,7 @@ int main()
 	bov_points_t* coord_cutDraw = bov_points_new(coord_cut, nPoints, GL_STATIC_DRAW);
 	bov_points_t* hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
 	bov_points_set_width(coordDraw, .001);
-	bov_points_set_width(coord_cutDraw, .05);
+	bov_points_set_width(coord_cutDraw, .001);
 	bov_points_set_width(hullDraw, .01);
 	bov_points_set_color(coordDraw, (GLfloat[4]) { 0.0, 0.0, 0.0, 1.0 });
 	bov_points_set_color(coord_cutDraw, (GLfloat[4]) { 0.0, 1.0, 0.0, 1.0 });
