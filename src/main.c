@@ -2,25 +2,40 @@
 #include "graham.h"
 #include <time.h>
 
-#define N_POINTS 20
+#define N_POINTS 1000
 // Global vars
 GLfloat (*my_points)[2];
 int count;
+int realloc_count;
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-		double xpos, ypos;
+	double xpos, ypos;
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
     	glfwGetCursorPos(window, &xpos, &ypos);
-			if (count < N_POINTS) {
+			if (count < (N_POINTS*(realloc_count+1))) {
 				my_points[count][0] = (GLfloat)xpos/400.0 - 1.0; // cursor coords != pixel coords
 				my_points[count][1] = -(GLfloat)ypos/400.0 + 1.0;
 				count++;
 			}
-			else if (count == N_POINTS) {
-				printf("sorry can't add more points\n");
+			else {
+				printf("reallocating\n");
+				my_points = realloc(my_points, 2*N_POINTS*sizeof(my_points[0]));
+				realloc_count++;
 			}
+		}
+		else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && count > 1) {
+	    	glfwGetCursorPos(window, &xpos, &ypos);
+			for (int i = 0; i < N_POINTS; i++) {
+                GLfloat x_pts = (GLfloat)xpos/400.0 - 1.0;
+                GLfloat y_pts = -(GLfloat)ypos/400.0 + 1.0;
+                if (fabs(my_points[i][0]-x_pts) < 0.05 && fabs(my_points[i][1]-y_pts) < 0.05) {
+                    swap(i, count-1, my_points);
+                    count--;
+                    break;
+            }
+		}
 	}
 }
 
@@ -58,8 +73,9 @@ int main()
 	double x, y;
 	int state;
 	count = 1;
+  realloc_count = 0;
 	// Main loop
-	while (!bov_window_should_close(window)) {
+	while (!bov_window_should_close(window) && glfwGetKey(window->self,GLFW_KEY_ESCAPE) != GLFW_PRESS) {
 		glfwSetMouseButtonCallback(window->self, mouse_button_callback);
 		glfwSetKeyCallback(window->self, key_callback);
 		// get cursor position
