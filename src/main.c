@@ -3,11 +3,15 @@
 #include <time.h>
 #include "myScan.h"
 #include "jarvis.h"
-#define ANIMATION_ON 1
-#define SHOW_INFO 1
+#define ANIMATION_ON 0
+#define SHOW_INFO 0
 int main()
 {
 	exactinit();
+	//printf("%f", orient2d((GLfloat[2]) { 0., 0. }, (GLfloat[2]) { 0., 1. }, (GLfloat[2]) { 1., 1. }));
+	printf("%d", r_tan((GLfloat[][2]) { { 0., 0. }, { 0., 1. },{ 1., 1. } },
+						3, 
+						(GLfloat[2]) { -1., 0. }));
 
 #if ANIMATION_ON
 	bov_window_t* window = bov_window_new(800, 800, "Hello there Jackie");

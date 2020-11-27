@@ -6,14 +6,13 @@
 #define ANIMATION_ON  1
 
 #include "jarvis.h"
-#include "graham.h"
 
 GLfloat xp_j, yp_j;  // Global variables
 
 
 void jarvis_march(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
 {
-    exactinit();
+    //exactinit();
     // Find the point with lowest y-coord
     int min_index = 0;
     GLfloat y_min = points[min_index][1];
@@ -43,4 +42,28 @@ void jarvis_march(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat
     } while (!(candidate[0] == hull[0][0] && candidate[1] == hull[0][1]));
 
     *hull_size = i;
+}
+
+GLsizei r_tan(GLfloat hull[][2], GLsizei hull_size, GLfloat p[2]) {
+    int l = 0;
+    int r = hull_size;
+    float l_prev = orient2d(p, hull[0], hull[hull_size - 1]);
+    float l_next = orient2d(p, hull[0], hull[(1 + hull_size) % hull_size]);
+
+    while (l < r) {
+        int c = (l + r) / 2;
+        float c_prev = orient2d(p, hull[c], hull[(c - 1 + hull_size) % hull_size]);
+        float c_next = orient2d(p, hull[c], hull[(c + 1 + hull_size) % hull_size]);
+        float c_side = orient2d(p, hull[l], hull[c]);
+        if (c_prev >= 0 && c_next >= 0)
+            return c;
+        else if (c_side > 0 && (l_next < 0 || l_prev > 0 && l_next > 0 || l_prev == 0 && l_next == 0) || c_side < 0 && c_prev < 0)
+            r = c;
+        else {
+            l = c + 1;
+            l_prev = -c_next;
+            l_next = orient2d(p, hull[l], hull[(l + 1 + hull_size) % hull_size]);
+        }
+    }
+    return l;
 }

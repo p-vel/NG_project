@@ -13,7 +13,9 @@
 #include <time.h>
 #include "inputs.h"
 #include "predicates.h"
+#include "graham.h"
 
 void jarvis_march(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat hull[][2]);
+GLsizei r_tan(GLfloat hull[][2], GLsizei hull_size, GLfloat p[2]);
 
 #endif
