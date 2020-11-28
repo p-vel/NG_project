@@ -3,7 +3,7 @@
 #include <time.h>
 #include "myScan.h"
 #include "jarvis.h"
-#define ANIMATION_ON 0
+#define ANIMATION_ON 1
 #define SHOW_INFO 0
 int main()
 {
@@ -51,8 +51,9 @@ int main()
 
 	clock_t t0 = clock();
   akl_toussaint(coord_cut, nPoints, &rem_points);
-  jarvis_march(coord_cut, rem_points, &my_hull_size, my_hull);
-  //jarvis_march(coord, nPoints, &my_hull_size, my_hull);
+  chan(coord_cut, rem_points, &my_hull_size, my_hull);
+  // jarvis_march(coord_cut, rem_points, &my_hull_size, my_hull);
+  // jarvis_march(coord, nPoints, &my_hull_size, my_hull);
   // graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);
   // graham_scan(coord, nPoints, &my_hull_size, my_hull);
 	clock_t t1 = clock();
