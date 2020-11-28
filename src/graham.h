@@ -15,7 +15,7 @@
 #include "predicates.h"
 
 //GLfloat* grahamScan();
-void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat hull[][2]);
+void graham_scan(GLfloat points[][2], GLsizei n_points, int *hull_size, GLfloat** hull);
 int compare(const void *a, const void *b);
 void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points);
 

@@ -4,14 +4,14 @@
 #include "myScan.h"
 #include "jarvis.h"
 #define ANIMATION_ON 1
-#define SHOW_INFO 0
+#define SHOW_INFO 1
 int main()
 {
 	exactinit();
 	//printf("%f", orient2d((GLfloat[2]) { 0., 0. }, (GLfloat[2]) { 0., 1. }, (GLfloat[2]) { 1., 1. }));
-	printf("%d", r_tan((GLfloat[][2]) { { 0., 0. }, { 0., 1. },{ 1., 1. } },
-						3, 
-						(GLfloat[2]) { -1., 0. }));
+	//printf("%d", r_tan((GLfloat[][2]) { { 0., 0. }, { 0., 1. },{ 1., 1. } },
+		//				3, 
+			//			(GLfloat[2]) { 0., 0. }));
 
 #if ANIMATION_ON
 	bov_window_t* window = bov_window_new(800, 800, "Hello there Jackie");
@@ -23,7 +23,6 @@ int main()
 	GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
 	GLfloat(*coord_cut)[2] = malloc(sizeof(coord[0]) * nPoints);
 	int rem_points;
-	// random_points(coord, nPoints);
 	float scaling = 500.;
 	for (int i = 0; i < nPoints; i++) {
 		coord[i][0] = coord[i][0] / scaling - 1.;
@@ -33,7 +32,7 @@ int main()
 	}
 
 	// ##### Circle or random #####
-	// const GLsizei nPoints = 28194;
+	// const GLsizei nPoints = 20;
 	// GLfloat (*coord)[2] = malloc(sizeof(coord[0])*nPoints);
 	//	// give a bit of entropy for the seed of rand()
 	//	// or it will always be the same sequence
@@ -52,6 +51,7 @@ int main()
 	clock_t t0 = clock();
   akl_toussaint(coord_cut, nPoints, &rem_points);
   chan(coord_cut, rem_points, &my_hull_size, my_hull);
+  //	chan(coord, nPoints, &my_hull_size, my_hull);
   // jarvis_march(coord_cut, rem_points, &my_hull_size, my_hull);
   // jarvis_march(coord, nPoints, &my_hull_size, my_hull);
   // graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);
@@ -75,7 +75,7 @@ int main()
 	bov_points_t* hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
 	bov_points_set_width(coordDraw, .001);
 	bov_points_set_width(coord_cutDraw, .001);
-	bov_points_set_width(hullDraw, .01);
+	bov_points_set_width(hullDraw, .001);
 	bov_points_set_color(coordDraw, (GLfloat[4]) { 0.0, 0.0, 0.0, 1.0 });
 	bov_points_set_color(coord_cutDraw, (GLfloat[4]) { 0.0, 1.0, 0.0, 1.0 });
 	bov_points_set_color(hullDraw, (GLfloat[4]) { 1.0, 0.0, 0.0, 1.0 });

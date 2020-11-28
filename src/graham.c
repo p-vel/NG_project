@@ -8,7 +8,7 @@
 #include "graham.h"
 #include "predicates.h"
 
-GLfloat xp_c, yp_c;  // Global variables
+GLfloat xp_g, yp_g;  // Global variables
 
 int compare(const void* a, const void* b)
 {
@@ -17,13 +17,13 @@ int compare(const void* a, const void* b)
     GLfloat* val1 = (GLfloat**)a;
     GLfloat* val2 = (GLfloat**)b;
 
-    GLfloat val = -orient2d((GLfloat[2]) { xp_c, yp_c }, val1, val2);
+    GLfloat val = -orient2d((GLfloat[2]) { xp_g, yp_g }, val1, val2);
 
     if (val == 0) {
-        GLfloat dx1 = val1[0] - xp_c;
-        GLfloat dy1 = val1[1] - yp_c;
-        GLfloat dx2 = val2[0] - xp_c;
-        GLfloat dy2 = val2[1] - yp_c;
+        GLfloat dx1 = val1[0] - xp_g;
+        GLfloat dy1 = val1[1] - yp_g;
+        GLfloat dx2 = val2[0] - xp_g;
+        GLfloat dy2 = val2[1] - yp_g;
         if (dx1 * dx1 + dy1 * dy1 > dx2 * dx2 + dy2 * dy2)
             return 1;
         else if (dx1 * dx1 + dy1 * dy1 < dx2 * dx2 + dy2 * dy2)
@@ -87,7 +87,7 @@ void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
     }
 }
 
-void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
+void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
 {
     exactinit();
     // Find the point with lowest y-coord
@@ -99,9 +99,9 @@ void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat 
             y_min = points[i][1];
         }
     }
-    // Setting the global variables xp_c, yp_c
-    xp_c = points[min_index][0];
-    yp_c = points[min_index][1];
+    // Setting the global variables xp_g, yp_g
+    xp_g = points[min_index][0];
+    yp_g = points[min_index][1];
     // Put this point at the beginning of the array
     swap(0, min_index, points);
     // Sorting
