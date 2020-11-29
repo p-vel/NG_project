@@ -11,6 +11,8 @@
 #include "subHull.h"
 #include <math.h>
 
+int alignedCase(GLfloat* a, GLfloat* p, GLfloat* b);
+
 void chan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2]);
 
 #endif

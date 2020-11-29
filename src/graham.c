@@ -87,7 +87,7 @@ void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
     }
 }
 
-void graham_scan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
+void graham_scan(const GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
 {
     exactinit();
     // Find the point with lowest y-coord
