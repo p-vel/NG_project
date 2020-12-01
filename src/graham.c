@@ -17,19 +17,18 @@ int compare(const void* a, const void* b)
     GLfloat* val1 = (GLfloat**)a;
     GLfloat* val2 = (GLfloat**)b;
 
+    if (val1[1] == yp_g && val2[1] == yp_g) {
+        return val1[0] > val2[0] ? 1 : val1[0] == val2[0] ? 0 : -1;
+    }
+
     GLfloat val = -orient2d((GLfloat[2]) { xp_g, yp_g }, val1, val2);
 
     if (val == 0) {
-        GLfloat dx1 = val1[0] - xp_g;
-        GLfloat dy1 = val1[1] - yp_g;
-        GLfloat dx2 = val2[0] - xp_g;
-        GLfloat dy2 = val2[1] - yp_g;
-        if (dx1 * dx1 + dy1 * dy1 > dx2 * dx2 + dy2 * dy2)
-            return 1;
-        else if (dx1 * dx1 + dy1 * dy1 < dx2 * dx2 + dy2 * dy2)
+        if (xp_g < val2[0] && val2[0] < val1[0] || yp_g < val2[1] && val2[1] < val1[1] || xp_g > val2[0] && val2[0] > val1[0] || yp_g > val2[1] && val2[1] > val1[1])
             return -1;
-        else
+        if (val1[0] == val2[0] && val1[1] == val2[1])
             return 0;
+        return 1;
     }
 
     return val > 0 ? 1 : -1;
@@ -87,31 +86,43 @@ void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
     }
 }
 
-void graham_scan(const GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
+void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
 {
     exactinit();
+    if (n_points == 1) {
+        *hull_size = 1;
+        hull[0][0] = ref_points[0][0];
+        hull[0][1] = ref_points[0][1];
+        return;
+    }
+
+    GLfloat(*points)[2] = malloc(sizeof(points[0]) * n_points);
+    for (int i = 0; i < n_points; i++) {
+        points[i][0] = ref_points[i][0];
+        points[i][1] = ref_points[i][1];
+    }
+
     // Find the point with lowest y-coord
     int min_index = 0;
-    GLfloat y_min = points[min_index][1];
+    yp_g = points[min_index][1];
+    xp_g = points[min_index][0];
     for (int i = 1; i < n_points; i++) {
-        if (points[i][1] < y_min) {       // Ignoring same x for now
+        if (points[i][1] < yp_g || points[i][1] == yp_g && points[i][0] < xp_g) {
             min_index = i;
-            y_min = points[i][1];
+            yp_g = points[i][1];
+            xp_g = points[i][0];
         }
     }
-    // Setting the global variables xp_g, yp_g
-    xp_g = points[min_index][0];
-    yp_g = points[min_index][1];
     // Put this point at the beginning of the array
     swap(0, min_index, points);
     // Sorting
     qsort(&points[1], n_points - 1, sizeof(GLfloat[2]), compare);
     // Main loop
     struct stack* my_stack = newStack(n_points);
-    for (int i = 0; i < n_points; i++) {
-        while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) < 0)) {
-            pop(my_stack);
-        }
+    for (int i = 0; i < n_points; i++) {        
+            while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) < 0)) {
+                pop(my_stack);
+            }
         push(my_stack, i);
     }
     // Retrieving the convex hull
@@ -127,4 +138,5 @@ void graham_scan(const GLfloat points[][2], GLsizei n_points, int* hull_size, GL
     }
     *hull_size = count;
     delete(my_stack);
+    free(points);
 }

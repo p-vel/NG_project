@@ -5,7 +5,7 @@
 #include "jarvis.h"
 #define ANIMATION_ON 1
 #define SHOW_INFO 1
-#define HEURISTIC 1
+#define HEURISTIC 0
 int main()
 {
 	exactinit();
@@ -20,8 +20,9 @@ int main()
 #endif
 
 	// ##### Circle or random #####
-	// const GLsizei nPoints = 20;
-	// GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * nPoints);
+	GLsizei side = 6;
+	const GLsizei nPoints = side * side;
+	GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * nPoints);
 	//	// give a bit of entropy for the seed of rand()
 	//	// or it will always be the same sequence
 	// int seed = (int)time(NULL);
@@ -30,18 +31,19 @@ int main()
 	// printf("seed=%d\n", seed);
 	// random_points(coord, nPoints);
 	// circle_points(coord, nPoints);
+	grid(coord, side);
 	
 	// ##### Jackie w/ heuristic ###### 
-	GLsizei nPoints;
-	GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
+	//GLsizei nPoints;
+	//GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
 #if HEURISTIC
 	GLfloat(*coord_cut)[2] = malloc(sizeof(coord[0]) * nPoints);
 	int rem_points;
 #endif
 	float scaling = 500.;
 	for (int i = 0; i < nPoints; i++) {
-		coord[i][0] = coord[i][0] / scaling - 1.;
-		coord[i][1] = coord[i][1] / scaling - 1.;
+		//coord[i][0] = coord[i][0] / scaling - 1.;
+		//coord[i][1] = coord[i][1] / scaling - 1.;
 #if HEURISTIC
 		coord_cut[i][0] = coord[i][0];
 		coord_cut[i][1] = coord[i][1];
@@ -56,9 +58,9 @@ int main()
 	clock_t t0 = clock();
 #if	HEURISTIC
   akl_toussaint(coord_cut, nPoints, &rem_points);
-  chan(coord_cut, rem_points, &my_hull_size, my_hull);
+  //chan(coord_cut, rem_points, &my_hull_size, my_hull);
   //jarvis_march(coord_cut, rem_points, &my_hull_size, my_hull);
-  //graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);  //ATTENTION J'AI CHANGÉ LES ARGUMENTS DE GRAHAM_SCAN (** AU LIEU DE [][2])
+  graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);  //ATTENTION J'AI CHANGÉ LES ARGUMENTS DE GRAHAM_SCAN (** AU LIEU DE [][2])
 #else
   chan(coord, nPoints, &my_hull_size, my_hull);
   //jarvis_march(coord, nPoints, &my_hull_size, my_hull);
@@ -80,14 +82,14 @@ int main()
 #if ANIMATION_ON
 	bov_points_t* coordDraw = bov_points_new(coord, nPoints, GL_STATIC_DRAW);
 	bov_points_t* hullDraw = bov_points_new(my_hull, my_hull_size, GL_STATIC_DRAW);
-	bov_points_set_width(coordDraw, .001);
-	bov_points_set_width(hullDraw, .001);
+	bov_points_set_width(coordDraw, .01);
+	bov_points_set_width(hullDraw, .01);
 	bov_points_set_color(coordDraw, (GLfloat[4]) { 0.0, 0.0, 0.0, 1.0 });
 	bov_points_set_color(hullDraw, (GLfloat[4]) { 1.0, 0.0, 0.0, 1.0 });
 	bov_points_set_outline_color(coordDraw, (GLfloat[4]) { 0.3, 0.12, 0.0, 0.25 });
 #if HEURISTIC
 	bov_points_t* coord_cutDraw = bov_points_new(coord_cut, nPoints, GL_STATIC_DRAW);
-	bov_points_set_width(coord_cutDraw, .001);
+	bov_points_set_width(coord_cutDraw, .01);
 	bov_points_set_color(coord_cutDraw, (GLfloat[4]) { 0.0, 1.0, 0.0, 1.0 });
 #endif
 

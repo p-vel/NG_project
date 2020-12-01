@@ -5,23 +5,6 @@
 
 #include "chan.h"
 
-int alignedCase(GLfloat* a, GLfloat* p, GLfloat* b) {
-	float dxa = a[0] - p[0];
-	float dya = a[1] - p[1];
-
-	float dxb = a[0] - p[0];
-	float dyb = a[1] - p[1];
-
-	float norma = dxa * dxa + dya * dya;
-	float normb = dxb * dxb + dyb * dyb;
-
-	if (norma == 0)
-		return 1;
-	if (normb == 0)
-		return -1;
-
-	return norma > normb ? 1 : -1;
-}
 
 void chan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2]) {
 	exactinit();
@@ -30,18 +13,19 @@ void chan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][
 
 	// Find the point with lowest y-coord
 	int min_index = 0;
-	GLfloat y_min = points[min_index][1];
+	yp = points[min_index][1];
+	xp = points[min_index][0];
 	for (int i = 1; i < n_points; i++) {
-		if (points[i][1] < y_min) {       // Ignoring same x for now
+		if (points[i][1] < yp || points[i][1] == yp && points[i][0] < xp) {
 			min_index = i;
-			y_min = points[i][1];
+			yp = points[i][1];
+			xp = points[i][0];
 		}
 	}
-	xp = points[min_index][0]; yp = y_min;
 
 	int converged = 0;
 	int m = 2;
-	int finalM;
+	int finalM; // Boolean
 	do {
 		
 		finalM = m == n_points ? 1 : 0;

@@ -23,6 +23,20 @@ void random_uniform_points(GLfloat coord[][2], GLsizei n,
 	}
 }
 
+void grid(GLfloat coord[][2], GLsizei side) {
+	float h = 1.6 / (side - 1);
+	GLfloat* linspace = malloc(sizeof(GLfloat) * side);
+	for (int i = 0; i < side; i++)
+		linspace[i] = i * h - 0.8;
+	int idx = 0;
+	for (int i = 0; i < side; i++)
+		for (int j = 0; j < side; j++) {
+			coord[idx][0] = linspace[i];
+			coord[idx][1] = linspace[j];
+			idx++;
+		}
+	free(linspace);
+}
 
 /* creating random points following a gaussian distribution.
  * around multiple centroid (maximum 6 centroids) which
