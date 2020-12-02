@@ -58,31 +58,77 @@ void jarvis_march(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat
     *hull_size = i;
 }
 
-GLsizei r_tan(GLfloat** hull, GLsizei hull_size, GLfloat p[2]) {
-    int l = 0;
-    int r = hull_size-1;
-    float l_prev = orient2d(p, hull[0], hull[hull_size - 1]);
-    float l_next = orient2d(p, hull[0], hull[(1 + hull_size) % hull_size]);
+//GLsizei r_tan(GLfloat hull[][2], GLsizei hull_size, GLfloat p[2]) {
+//    int l = 0;
+//    int r = hull_size-1;
+//    float l_prev = orient2d(p, hull[0], hull[hull_size - 1]);
+//    float l_next = orient2d(p, hull[0], hull[(1 + hull_size) % hull_size]);
+//
+//    while (l < r) {
+//        int c = (l + r) / 2;
+//        float c_prev = orient2d(p, hull[c], hull[(c - 1 + hull_size) % hull_size]);
+//        float c_next = orient2d(p, hull[c], hull[(c + 1 + hull_size) % hull_size]);
+//        float c_side = orient2d(p, hull[l], hull[c]);
+//        if (c_prev >= 0 && c_next >= 0) {
+//            if (hull[c][0] == p[0] && hull[c][1] == p[1])
+//                return orient2d(hull[(c + 1) % hull_size], p, hull[(c - 1 + hull_size) % hull_size]) < 0 ? (c + 1) % hull_size : (c - 1 + hull_size) % hull_size;
+//            return c;
+//        }
+//        else if (c_side > 0 && (l_next < 0 || l_prev > 0 && l_next > 0 || l_prev == 0 && l_next == 0) || c_side < 0 && c_prev < 0)
+//            r = c;
+//        else {
+//            l = c + 1;
+//            l_prev = -c_next;
+//            l_next = orient2d(p, hull[l], hull[(l + 1 + hull_size) % hull_size]);
+//        }
+//    }
+//    if (hull[l][0] == p[0] && hull[l][1] == p[1])
+//        return orient2d(hull[(l + 1) % hull_size], p, hull[(l - 1 + hull_size) % hull_size]) < 0 ? (l + 1) % hull_size : (l - 1 + hull_size) % hull_size;
+//    return l;
+//}
 
-    while (l < r) {
-        int c = (l + r) / 2;
-        float c_prev = orient2d(p, hull[c], hull[(c - 1 + hull_size) % hull_size]);
-        float c_next = orient2d(p, hull[c], hull[(c + 1 + hull_size) % hull_size]);
-        float c_side = orient2d(p, hull[l], hull[c]);
-        if (c_prev >= 0 && c_next >= 0) {
-            if (hull[c][0] == p[0] && hull[c][1] == p[1])
-                return orient2d(hull[(c + 1) % hull_size], p, hull[(c - 1 + hull_size) % hull_size]) < 0 ? (c + 1) % hull_size : (c - 1 + hull_size) % hull_size;
+GLsizei r_tan(GLfloat** hull, GLsizei n, GLfloat p[2]) {
+
+    exactinit();
+
+    int a, b, c;
+    int upA, dnC;
+
+    if (n == 1)
+        return 0;
+
+    if (orient2d(p, hull[1], hull[0]) <= 0 && orient2d(p, hull[n - 1], hull[0]) < 0)
+        return 0;
+
+    //a = 0;
+    //b = n;
+    for (a = 0, b = n; a < b; ) {
+        c = (a + b) / 2;
+        dnC = orient2d(p, hull[(c + 1) % n], hull[c]) <= 0;
+        if (dnC && orient2d(p, hull[(c - 1 + n) % n], hull[c]) < 0)
             return c;
+        upA = orient2d(p, hull[(a + 1) % n], hull[a]) >= 0;
+        if (upA) {
+            if (dnC)
+                b = c;
+            else {
+                if (orient2d(p, hull[a], hull[c]) >= 0)
+                    b = c;
+                else
+                    a = c;
+            }
         }
-        else if (c_side > 0 && (l_next < 0 || l_prev > 0 && l_next > 0 || l_prev == 0 && l_next == 0) || c_side < 0 && c_prev < 0)
-            r = c;
         else {
-            l = c + 1;
-            l_prev = -c_next;
-            l_next = orient2d(p, hull[l], hull[(l + 1 + hull_size) % hull_size]);
+            if (!dnC)
+                a = c;
+            else {
+                if (orient2d(p, hull[a], hull[c]) >= 0)
+                    b = c;
+                else
+                    a = c;
+            }
         }
-    }
-    if (hull[l][0] == p[0] && hull[l][1] == p[1])
-        return orient2d(hull[(l + 1) % hull_size], p, hull[(l - 1 + hull_size) % hull_size]) > 0 ? (l + 1) % hull_size : (l - 1 + hull_size) % hull_size;
-    return l;
+    } 
+    return a;
+
 }

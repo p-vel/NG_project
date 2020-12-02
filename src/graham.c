@@ -126,7 +126,14 @@ void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfl
         push(my_stack, i);
     }
     // Retrieving the convex hull
-    int count = 0;
+    for (int i = 0; i < size(my_stack); i++) {
+        int index = my_stack->items[i];
+        hull[i][0] = points[index][0];
+        hull[i][1] = points[index][1];
+    }
+    *hull_size = size(my_stack);
+
+    /*int count = 0;
     while (!isEmpty(my_stack)) {
         int index = peek(my_stack);
         pop(my_stack);
@@ -135,8 +142,8 @@ void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfl
         hull[count][0] = x_hull;
         hull[count][1] = y_hull;
         count++;
-    }
-    *hull_size = count;
+    }*/
+
     delete(my_stack);
     free(points);
 }

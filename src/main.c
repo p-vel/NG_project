@@ -10,9 +10,23 @@ int main()
 {
 	exactinit();
 	//printf("%f", orient2d((GLfloat[2]) { 0., 0. }, (GLfloat[2]) { 0., 1. }, (GLfloat[2]) { 1., 1. }));
-	//printf("%d", r_tan((GLfloat[][2]) { { 0., 0. }, { 0., 1. },{ 1., 1. } },
-		//				3, 
-			//			(GLfloat[2]) { 0., 0. }));
+	/*GLfloat myHull[8][2] = { { 0., 0. }, {0.5,0.},{ 1., 0. },{1.,0.5}, { 1., 1. },{0.5,1 },{0,1},{0,0.5} };
+	printf("%d%d%d%d%d%d%d%d\n", 
+		r_tan(myHull, 8, (GLfloat[2]) { -.5, .5 }),
+		r_tan(myHull, 8, (GLfloat[2]) { -.5, 0. }),
+		r_tan(myHull, 8, (GLfloat[2]) { .5, -.5 }),
+		r_tan(myHull, 8, (GLfloat[2]) { 1., -.5 }),
+		r_tan(myHull, 8, (GLfloat[2]) { 1.5, .5 }),
+		r_tan(myHull, 8, (GLfloat[2]) { 1.5, 1. }),
+		r_tan(myHull, 8, (GLfloat[2]) { .5, 1.5 }), 
+		r_tan(myHull, 8, (GLfloat[2]) { 0., 1.5 }));*/
+	int my_first_hull_size;
+	GLfloat** my_first_hull = malloc(sizeof(GLfloat*) * 2);
+	my_first_hull[0] = malloc(sizeof(GLfloat) * 2);
+	my_first_hull[1] = malloc(sizeof(GLfloat) * 2);
+	graham_scan((GLfloat[2][2]) { {1., 0.}, { 0.,1. } }, 2, &my_first_hull_size, my_first_hull);
+
+	free(my_first_hull[0]); free(my_first_hull[1]); free(my_first_hull);
 
 #if ANIMATION_ON
 	bov_window_t* window = bov_window_new(800, 800, "Hello there Jackie");
@@ -20,9 +34,9 @@ int main()
 #endif
 
 	// ##### Circle or random #####
-	GLsizei side = 6;
-	const GLsizei nPoints = side * side;
-	GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * nPoints);
+	//GLsizei side = 4;
+	//const GLsizei nPoints = side * side;
+	//GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * nPoints);
 	//	// give a bit of entropy for the seed of rand()
 	//	// or it will always be the same sequence
 	// int seed = (int)time(NULL);
@@ -31,19 +45,19 @@ int main()
 	// printf("seed=%d\n", seed);
 	// random_points(coord, nPoints);
 	// circle_points(coord, nPoints);
-	grid(coord, side);
+	//grid(coord, side);
 	
 	// ##### Jackie w/ heuristic ###### 
-	//GLsizei nPoints;
-	//GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
+	GLsizei nPoints;
+	GLfloat(*coord)[2]     = scanFile("../JackieChan.txt", &nPoints);
 #if HEURISTIC
 	GLfloat(*coord_cut)[2] = malloc(sizeof(coord[0]) * nPoints);
 	int rem_points;
 #endif
 	float scaling = 500.;
 	for (int i = 0; i < nPoints; i++) {
-		//coord[i][0] = coord[i][0] / scaling - 1.;
-		//coord[i][1] = coord[i][1] / scaling - 1.;
+		coord[i][0] = coord[i][0] / scaling - 1.;
+		coord[i][1] = coord[i][1] / scaling - 1.;
 #if HEURISTIC
 		coord_cut[i][0] = coord[i][0];
 		coord_cut[i][1] = coord[i][1];
