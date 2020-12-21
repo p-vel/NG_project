@@ -38,14 +38,15 @@ void chan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][
 		}
 
 		//Merge the hulls
-		GLfloat current[2] = { xp,yp };
+		GLfloat current[2] = { xp,yp }; // Last added point in hull
 		int hullOfCurrent = min_index / m;
 		int t_idxOfCurrrent = 0;
 		*hull_size = 0;
 		for (int i = 0; i < m; i++) {
 			hull[i][0] = current[0]; hull[i][1] = current[1];
 			(*hull_size)++;
-			GLfloat maxTan[2] = { current[0],current[1] };
+			GLfloat maxTan[2]; // Candidate 
+			int hullOfMaxTan, t_idxOfMaxTan;
 			for (int j = 0; j < nHulls; j++) {
 				int t_idx;
 				if (j == hullOfCurrent)
@@ -53,16 +54,20 @@ void chan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][
 				else
 					t_idx = r_tan((subHulls[j])->hull, (subHulls[j])->hull_size, current);
 				GLfloat currentTan[2] = { (subHulls[j])->hull[t_idx][0],(subHulls[j])->hull[t_idx][1] };
-				float orient = orient2d(currentTan, current, maxTan);
-				if (orient < 0 || (orient == 0 && alignedCase(current, currentTan, maxTan) == 1) || maxTan[0] == current[0] && maxTan[1] == current[1]) {
+				float orient = -1.;
+				if (j > 0)
+					orient = orient2d(current, maxTan, currentTan);
+				if (orient < 0 ) { //|| (orient == 0 && alignedCase(current, currentTan, maxTan) == 1)
 					maxTan[0] = currentTan[0]; maxTan[1] = currentTan[1];
-					hullOfCurrent = j;
-					t_idxOfCurrrent = t_idx;
+					hullOfMaxTan = j;
+					t_idxOfMaxTan = t_idx;
 				}
 				
 			}
 			current[0] = maxTan[0]; current[1] = maxTan[1];
+			hullOfCurrent = hullOfMaxTan; t_idxOfCurrrent = t_idxOfMaxTan;
 			if (current[0] == xp && current[1] == yp) {
+				printf("m : %d\n", m);
 				converged = 1;
 				break;
 			}

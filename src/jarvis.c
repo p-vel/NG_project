@@ -22,7 +22,7 @@ int alignedCase(GLfloat* a, GLfloat* p, GLfloat* b) {
 
 }
 
-
+//void jarvis_march(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
 void jarvis_march(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
 {
     exactinit();
@@ -87,6 +87,7 @@ void jarvis_march(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat
 //    return l;
 //}
 
+//GLsizei r_tan(GLfloat hull[][2], GLsizei n, GLfloat p[2]) {
 GLsizei r_tan(GLfloat** hull, GLsizei n, GLfloat p[2]) {
 
     exactinit();
@@ -97,22 +98,52 @@ GLsizei r_tan(GLfloat** hull, GLsizei n, GLfloat p[2]) {
     if (n == 1)
         return 0;
 
-    if (orient2d(p, hull[1], hull[0]) <= 0 && orient2d(p, hull[n - 1], hull[0]) < 0)
-        return 0;
+    GLfloat p2[2], p3[2];
+    int idx;
+
+    idx = 1;
+    p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+    idx = 0;
+    p3[0] = hull[idx][0]; p3[1] = hull[idx][1];
+
+
+    if (orient2d(p, p2, p3) <= 0) {
+        idx = n-1;
+        p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+        if (orient2d(p, p2, p3) < 0)
+            return 0;
+    }
 
     //a = 0;
     //b = n;
     for (a = 0, b = n; a < b; ) {
         c = (a + b) / 2;
-        dnC = orient2d(p, hull[(c + 1) % n], hull[c]) <= 0;
-        if (dnC && orient2d(p, hull[(c - 1 + n) % n], hull[c]) < 0)
+
+        idx = (c + 1) % n;
+        p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+        idx = c;
+        p3[0] = hull[idx][0]; p3[1] = hull[idx][1];
+        dnC = orient2d(p, p2, p3) <= 0;
+
+        idx = (c - 1 + n) % n;
+        p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+        if (dnC && orient2d(p, p2, p3) < 0)
             return c;
-        upA = orient2d(p, hull[(a + 1) % n], hull[a]) >= 0;
+
+        idx = (a + 1) % n;
+        p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+        idx = a;
+        p3[0] = hull[idx][0]; p3[1] = hull[idx][1];
+        upA = orient2d(p, p2, p3) >= 0;
         if (upA) {
             if (dnC)
                 b = c;
             else {
-                if (orient2d(p, hull[a], hull[c]) >= 0)
+                idx = a;
+                p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+                idx = c;
+                p3[0] = hull[idx][0]; p3[1] = hull[idx][1];
+                if (orient2d(p, p2, p3) >= 0)
                     b = c;
                 else
                     a = c;
@@ -122,7 +153,11 @@ GLsizei r_tan(GLfloat** hull, GLsizei n, GLfloat p[2]) {
             if (!dnC)
                 a = c;
             else {
-                if (orient2d(p, hull[a], hull[c]) >= 0)
+                idx = a;
+                p2[0] = hull[idx][0]; p2[1] = hull[idx][1];
+                idx = c;
+                p3[0] = hull[idx][0]; p3[1] = hull[idx][1];
+                if (orient2d(p, p2, p3) <= 0)
                     b = c;
                 else
                     a = c;

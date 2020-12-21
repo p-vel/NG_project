@@ -11,6 +11,7 @@ struct subHull* newSubHull(GLfloat points[][2], GLsizei n_points)
         (pt->hull)[i] = (GLfloat*)malloc(sizeof(GLfloat) * 2);
 
     graham_scan(points, n_points, &(pt->hull_size), pt->hull);
+    //jarvis_march(points, n_points, &(pt->hull_size), pt->hull);
 
     return pt;
 }

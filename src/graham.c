@@ -86,6 +86,7 @@ void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
     }
 }
 
+//void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
 void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
 {
     exactinit();
