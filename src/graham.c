@@ -5,10 +5,23 @@
 #define DEBUG_MODE  1
 #define ANIMATION_ON  1
 
-#include "graham.h"
+#include "algorithms.h"
 
 GLfloat xp_g, yp_g;  // Global variables
 
+/*
+* Function that compares a and b with respect to the global minimum
+* 
+* Returns 1 if:         Returns -1 if:      
+*   a      b               b      a
+*    \    /                 \    /
+*     \  /                   \  /
+*  {xp_g,yp_g}            {xp_g,yp_g}
+*   
+* Treats also the case when the points are aligned: Returns 1 if a is closer to {xp_g,yp_g} and -1 if converse
+* 
+* Returns 0 if a == b
+*/
 int compare(const void* a, const void* b)
 {
     //exactinit();
@@ -33,10 +46,18 @@ int compare(const void* a, const void* b)
     return val > 0 ? 1 : -1;
 }
 
-//void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
-void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfloat** hull)
+/*
+* Function implementing the Graham Scan
+* Arguments
+*   points   : the set of points we wants to convexhullise
+*   n_points : the number of points in points
+*   hull_size: the size of the hull that will be created (passed by ref)
+*   hull     : without any surprises... the future hull
+*
+*/
+void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2])
 {
-    exactinit();
+    
     if (n_points == 1) {
         *hull_size = 1;
         hull[0][0] = ref_points[0][0];
@@ -86,6 +107,16 @@ void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfl
     free(points);
 }
 
+
+/*
+* Function implementing AKL-Toussaint heuristic (i.e. removing all the points outside the quadrilatere defined by the extreme
+* points of the set. NB: Done in place
+* Arguments
+*   points    : the set of points we want to Akl-Toussaintise
+*   n_points  : the number of points in points
+*   rem_points: the number of points that survived the terrible cut.
+*
+*/
 void akl_toussaint(GLfloat points[][2], GLsizei n_points, GLsizei* rem_points)
 {
     exactinit();
