@@ -8,7 +8,7 @@
 #include "BOV.h"
 #include <math.h>
 #include <stdlib.h>
-#include "stack.h"
+#include "myStruct.h"
 #include "utils.h"
 #include <time.h>
 #include "inputs.h"

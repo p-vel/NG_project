@@ -1,11 +1,34 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "stack.h"
+
+#include "myStruct.h"
+
+
+struct subHull* newSubHull(GLfloat points[][2], GLsizei n_points)
+{
+    struct subHull *pt = (struct subHull*)malloc(sizeof(struct subHull));
+
+    pt->hull = (GLfloat**)malloc(sizeof(GLfloat*) * n_points);
+    for (int i = 0; i < n_points; i++)
+        (pt->hull)[i] = (GLfloat*)malloc(sizeof(GLfloat) * 2);
+
+    graham_scan(points, n_points, &(pt->hull_size), pt->hull);
+    //jarvis_march(points, n_points, &(pt->hull_size), pt->hull);
+
+    return pt;
+}
+
+void delete_sh(struct subHull* pt)
+{
+    for (int i = 0; i < pt->hull_size; i++)
+        free((pt->hull)[i]);
+    free(pt->hull);
+    free(pt);
+}
+
 
 // Utility function to initialize stack
 struct stack* newStack(int capacity)
 {
-    struct stack *pt = (struct stack*)malloc(sizeof(struct stack));
+    struct stack* pt = (struct stack*)malloc(sizeof(struct stack));
 
     pt->maxsize = capacity;
     pt->top = -1;
@@ -15,25 +38,25 @@ struct stack* newStack(int capacity)
 }
 
 // Utility function to return the size of the stack
-int size(struct stack *pt)
+int size(struct stack* pt)
 {
     return pt->top + 1;
 }
 
 // Utility function to check if the stack is empty or not
-int isEmpty(struct stack *pt)
+int isEmpty(struct stack* pt)
 {
     return pt->top == -1;    // or return size(pt) == 0;
 }
 
 // Utility function to check if the stack is full or not
-int isFull(struct stack *pt)
+int isFull(struct stack* pt)
 {
     return pt->top == pt->maxsize - 1;    // or return size(pt) == pt->maxsize;
 }
 
 // Utility function to add an element x in the stack
-void push(struct stack *pt, int x)
+void push(struct stack* pt, int x)
 {
     // check if stack is already full. Then inserting an element would
     // lead to stack overflow
@@ -47,7 +70,7 @@ void push(struct stack *pt, int x)
 }
 
 // Utility function to return top element in a stack
-int peek(struct stack *pt)
+int peek(struct stack* pt)
 {
     // check for empty stack
     if (!isEmpty(pt))
@@ -57,7 +80,7 @@ int peek(struct stack *pt)
 }
 
 // Utility function to pop top element from the stack
-int pop(struct stack *pt)
+int pop(struct stack* pt)
 {
     // check for stack underflow
     if (isEmpty(pt))
@@ -69,7 +92,7 @@ int pop(struct stack *pt)
     return pt->items[pt->top--];
 }
 
-int nextToTop(struct stack *pt)
+int nextToTop(struct stack* pt)
 {
     int p = pop(pt);
     int result = peek(pt);
@@ -77,8 +100,9 @@ int nextToTop(struct stack *pt)
     return result;
 }
 
-void delete(struct stack *pt)
+void delete_st(struct stack* pt)
 {
     free(pt->items);
     free(pt);
 }
+

@@ -5,14 +5,14 @@
 #include "jarvis.h"
 #define ANIMATION_ON 1
 #define SHOW_INFO 1
-#define HEURISTIC 0
+#define HEURISTIC 1
 #define RTANFIX 0
 int main()
 {
 	exactinit();
 
 #if RTANFIX
-	const GLsizei nPoints = 2;
+	const GLsizei nPoints = 10;
 	GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * nPoints);
 	GLfloat(*circle)[2] = malloc(sizeof(circle[0]) * nPoints);
 
@@ -33,7 +33,7 @@ int main()
 	GLfloat(*my_hull)[2] = malloc(sizeof(my_hull[0]) * nPoints);
 	int my_hull_size;
 
-	graham_scan(coord, nPoints, &my_hull_size, my_hull);
+	jarvis_march(coord, nPoints, &my_hull_size, my_hull);
 	for (int i = 0; i < my_hull_size; i++)
 		printf("hull[%d] %5.2f; %5.2f\n", i, my_hull[i][0], my_hull[i][1]);
 
@@ -89,24 +89,7 @@ int main()
 
 
 #else
-	//printf("%f", orient2d((GLfloat[2]) { 0., 0. }, (GLfloat[2]) { 0., 1. }, (GLfloat[2]) { 1., 1. }));
-	/*GLfloat myHull[8][2] = { { 0., 0. }, {0.5,0.},{ 1., 0. },{1.,0.5}, { 1., 1. },{0.5,1 },{0,1},{0,0.5} };
-	printf("%d%d%d%d%d%d%d%d\n", 
-		r_tan(myHull, 8, (GLfloat[2]) { -.5, .5 }),
-		r_tan(myHull, 8, (GLfloat[2]) { -.5, 0. }),
-		r_tan(myHull, 8, (GLfloat[2]) { .5, -.5 }),
-		r_tan(myHull, 8, (GLfloat[2]) { 1., -.5 }),
-		r_tan(myHull, 8, (GLfloat[2]) { 1.5, .5 }),
-		r_tan(myHull, 8, (GLfloat[2]) { 1.5, 1. }),
-		r_tan(myHull, 8, (GLfloat[2]) { .5, 1.5 }), 
-		r_tan(myHull, 8, (GLfloat[2]) { 0., 1.5 }));*/
-	int my_first_hull_size;
-	GLfloat** my_first_hull = malloc(sizeof(GLfloat*) * 2);
-	my_first_hull[0] = malloc(sizeof(GLfloat) * 2);
-	my_first_hull[1] = malloc(sizeof(GLfloat) * 2);
-	graham_scan((GLfloat[2][2]) { {1., 0.}, { 0.,1. } }, 2, &my_first_hull_size, my_first_hull);
 
-	free(my_first_hull[0]); free(my_first_hull[1]); free(my_first_hull);
 
 #if ANIMATION_ON
 	bov_window_t* window = bov_window_new(800, 800, "Hello there Jackie");
@@ -115,12 +98,12 @@ int main()
 
 	// ##### Circle or random #####
 	//GLsizei side = 4;
-	const GLsizei nPoints = 30;// side* side;
+	const GLsizei nPoints = 5000;// side* side;
 	GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * nPoints);
 	//	// give a bit of entropy for the seed of rand()
 	//	// or it will always be the same sequence
 	int seed = (int)time(NULL);
-	seed = 1608484433;
+	//seed = 1608484433;
 	srand(seed);
 	//	// we print the seed so you can get the distribution of points back
 	printf("seed=%d\n", seed);
@@ -137,6 +120,10 @@ int main()
 #endif
 	float scaling = 500.;
 	for (int i = 0; i < nPoints; i++) {
+		if (coord[i][0] * coord[i][0] + coord[i][1] * coord[i][1] > 0.99) {
+			coord[i][0] /= 2;
+			coord[i][1] /= 2;
+		}
 	//	coord[i][0] = coord[i][0] / scaling - 1.;
 	//	coord[i][1] = coord[i][1] / scaling - 1.;
 #if HEURISTIC
@@ -153,9 +140,9 @@ int main()
 	clock_t t0 = clock();
 #if	HEURISTIC
   akl_toussaint(coord_cut, nPoints, &rem_points);
-  //chan(coord_cut, rem_points, &my_hull_size, my_hull);
+  chan(coord_cut, rem_points, &my_hull_size, my_hull);
   //jarvis_march(coord_cut, rem_points, &my_hull_size, my_hull);
-  graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);  //ATTENTION J'AI CHANGÉ LES ARGUMENTS DE GRAHAM_SCAN (** AU LIEU DE [][2])
+  //graham_scan(coord_cut, rem_points, &my_hull_size, my_hull);  //ATTENTION J'AI CHANGÉ LES ARGUMENTS DE GRAHAM_SCAN (** AU LIEU DE [][2])
 #else
   chan(coord, nPoints, &my_hull_size, my_hull);
   //jarvis_march(coord, nPoints, &my_hull_size, my_hull);

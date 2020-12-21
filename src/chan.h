@@ -8,7 +8,7 @@
 
 #include "graham.h"
 #include "jarvis.h"
-#include "subHull.h"
+#include "myStruct.h"
 #include <math.h>
 
 void chan(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2]);
