@@ -1,7 +1,14 @@
-Numerical Geometry Project
-==========================
+Numerical Geometry Project: Convex Hulls
+========================================
 
-This folder is the canvas for your upcoming project.
+This folder contains our project on convex hulls. 
+More precisely, three algorithms have been implemented:
+ * Graham Scan
+ * Jarvis March
+ * Chan Algorithm
+We have also implemented the Akl-Toussaint Heuristic.
+
+<!--
 It should contain:
  * this file (**README.md**)
  * the description of the structure of the program in **CMakeLists.txt**
@@ -21,3 +28,4 @@ for help on the BOV library functions.
 See [deps/BOV/examples/](deps/BOV/examples/) for more
 examples using the BOV library
 
+-->
