@@ -6,6 +6,7 @@ More precisely, three algorithms have been implemented:
  * Graham Scan
  * Jarvis March
  * Chan Algorithm
+ 
 We have also implemented the Akl-Toussaint Heuristic.
 
 <!--
