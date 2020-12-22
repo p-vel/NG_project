@@ -16,8 +16,14 @@ int main(int argc, char* argv[])
     if (argc == 2) {
         // Command line arguments
         int n_points = atoi(argv[1]);
-
         GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points);
+
+        // Decomment for Chan
+        // int n_points_max = 100000;
+        // GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points_max);
+        // int n_points;
+        // scanFile("../JackieChanWTF.txt", coord, &n_points);
+
         GLfloat(*hull)[2] = malloc(sizeof(GLfloat[2]) * n_points);
         int hull_size;
         int rem_size;
@@ -41,8 +47,8 @@ int main(int argc, char* argv[])
         printf("#################################################\n");
 
         t0 = clock();
-        akl_toussaint(coord, n_points, &rem_size);
-        graham_scan(coord, rem_size, &hull_size, hull);
+        // akl_toussaint(coord, n_points, &rem_size);
+        graham_scan(coord, n_points, &hull_size, hull);
         t1 = clock();
         elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
         printf("#################################################\n");
@@ -54,8 +60,8 @@ int main(int argc, char* argv[])
         printf("#################################################\n");
 
         t0 = clock();
-        akl_toussaint(coord, n_points, &rem_size);
-        chan(coord, rem_size, &hull_size, hull);
+        // akl_toussaint(coord, n_points, &rem_size);
+        chan(coord, n_points, &hull_size, hull);
         t1 = clock();
         elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
         printf("#################################################\n");
@@ -76,12 +82,16 @@ int main(int argc, char* argv[])
         bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
 
         // ##### Jackie w/ heuristic ######
-        int n_points = 100;
-        GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points);
+        int n_points_max = 100000;
+        int n_points;
+        GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points_max);
+        scanFile("../JackieChanWTF.txt", coord, &n_points);
+        // int n_points = 100;
+        // GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points);
         GLfloat(*hull)[2] = malloc(sizeof(GLfloat[2]) * n_points);
         int hull_size;
 
-        random_points(coord, n_points);
+        // random_points(coord, n_points);
 
         // graham_scan_animation(coord, n_points, &hull_size, hull, window);
         chan_animation(coord, n_points, &hull_size, hull, window);
@@ -100,6 +110,9 @@ int main(int argc, char* argv[])
             bov_window_update(window);
         }
 
+        bov_points_delete(pointsDraw);
+        bov_points_delete(hullDraw);
+        bov_window_delete(window);
         free(coord);
         free(hull);
     }
