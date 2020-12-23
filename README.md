@@ -24,6 +24,14 @@ and `algo` is the algorithm illustrated by the animation:
  * `0` Graham Scan
  * `1` Chan's algorithm
  
+ For instance, `myexec 1 0` will display the Graham Scan on a confused Jackie.
+ 
+ To show the **convex hull without animation**, please enter 
+ 
+ `myexec set algo 0`
+ 
+ where `set` and `algo` can be used as above, with a third possibility for `algo`: if set to `2`, the Jarvis March will be used to compute the convex hull.
+ 
 To **benchmark** our three algorithms with the Akl-Toussaint heuristic, please enter
 
 `myexec nPoints`
