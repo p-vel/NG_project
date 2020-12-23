@@ -28,7 +28,7 @@ To **benchmark** our three algorithms with the Akl-Toussaint heuristic, please e
 
 `myexec nPoints`
 
-with `nPoints` being an integer value egals to the size of a random set that will be convexhullised by our algorithms. The result of the benchmark will be displayed on the console.
+with `nPoints` being an integer value egals to the size of a random set that will be convexhullised by our algorithms. The result of the benchmark will be displayed on the console. Taking `nPoints <= 1e7` works perfectly fine on our computers.
 
 If you simply wants to play with our **sandbox**, please enter
 
