@@ -34,6 +34,8 @@ If you simply wants to play with our **sandbox**, please enter
 
 `myexec`
 
+You can then add points by left clicking and remove points with right click. Please use a mouse and not a trackpad :-)
+
 
 A more complete documentation for each algorithm is available in [doc/fullReadMe.md](doc/fullReadMe.md).
 
