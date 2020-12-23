@@ -19,9 +19,8 @@
 #define COLOUR_MIDNIGHT_BLUE (GLfloat[4]) {52.0/255.0, 73.0/255.0, 94.0/255.0, 1.0}
 #define COLOUR_GREEN_STYLE (GLfloat[4]) {46./255., 204./255., 113./255., 1.0}
 #define COLOUR_WHITE (GLfloat[4]) {1.0, 1.0, 1.0, 1.0}
-#define COLOUR_DARK_RED (GLfloat[4]){192./255., 57./255., 43./255., 1.0}
+#define COLOUR_DARK_RED (GLfloat[4]) {192./255., 57./255., 43./255., 1.0}
 
-void jarvis_march_animation(GLfloat points[][2], int n_points, bov_window_t* window, double points_size);
 void graham_scan_animation(GLfloat points[][2], int n_points, int* hull_size, GLfloat hull[][2], bov_window_t* window, double scale, double speed);
 void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2], bov_window_t* window, double scale, double speed);
 
