@@ -12,6 +12,8 @@ More precisely, four algorithms have been implemented:
 
 A more complete documentation for each algorithm is available in [doc/fullReadMe.md](doc/fullReadMe.md).
 
+![](docs/chan.jpg)
+
 
 <!--
 It should contain:
