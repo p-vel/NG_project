@@ -9,16 +9,18 @@
 #define HEURISTIC 0
 
 #define N_POINTS 1000
-// Global vars
+
+// Global vars for the sandbox mode
 GLfloat (*my_points)[2];
 int count;
 int realloc_count;
 
+// Mouse Input
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	double xpos, ypos;
 
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		glfwGetCursorPos(window, &xpos, &ypos);
 		if (count < (N_POINTS*(realloc_count+1))) {
 			my_points[count][0] = (GLfloat)xpos/400.0 - 1.0; // cursor coords != pixel coords
@@ -31,7 +33,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			realloc_count++;
 		}
 	}
-	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && count > 1) {
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS && count > 3) {
 		glfwGetCursorPos(window, &xpos, &ypos);
 		for (int i = 0; i < N_POINTS; i++) {
 			GLfloat x_pts = (GLfloat)xpos/400.0 - 1.0;
@@ -45,6 +47,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	}
 }
 
+// Keyboard input
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_C && action == GLFW_PRESS) {
@@ -54,6 +57,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
+// Main
 int main(int argc, char* argv[])
 {
 	int seed = (int)time(NULL);
@@ -88,8 +92,8 @@ int main(int argc, char* argv[])
 		printf("#################################################\n");
 
 		t0 = clock();
-		// akl_toussaint(coord, n_points, &rem_size);
-		graham_scan(coord, n_points, &hull_size, hull);
+		akl_toussaint(coord, n_points, &rem_size);
+		graham_scan(coord, rem_size, &hull_size, hull);
 		t1 = clock();
 		elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
 		printf("#################################################\n");
@@ -101,8 +105,8 @@ int main(int argc, char* argv[])
 		printf("#################################################\n");
 
 		t0 = clock();
-		// akl_toussaint(coord, n_points, &rem_size);
-		chan(coord, n_points, &hull_size, hull);
+		akl_toussaint(coord, n_points, &rem_size);
+		chan(coord, rem_size, &hull_size, hull);
 		t1 = clock();
 		elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
 		printf("#################################################\n");
@@ -117,7 +121,7 @@ int main(int argc, char* argv[])
 		free(hull);
 	}
 
-	else if (argc == 3){
+	else if (argc == 4){
 
 		int which_set = atoi(argv[1]);
 		int which_algo = atoi(argv[2]);
@@ -156,11 +160,26 @@ int main(int argc, char* argv[])
 		GLfloat(*hull)[2] = malloc(sizeof(GLfloat[2]) * n_points);
 		int hull_size;
 
-		if (which_algo == 0) {
-			graham_scan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
+		int animation_on = atoi(argv[3]);
+
+		if (animation_on == 1) {
+			if (which_algo == 0) {
+				graham_scan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
+			}
+			else if (which_algo == 1) {
+				chan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
+			}
 		}
-		else if (which_algo == 1) {
-			chan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
+
+		else if (animation_on == 0) {
+			int rem_points;
+			akl_toussaint(coord, n_points, &rem_points);
+			if (which_algo == 0) {
+				graham_scan(coord, rem_points, &hull_size, hull);
+			}
+			else if (which_algo == 1) {
+				chan(coord, rem_points, &hull_size, hull);
+			}
 		}
 
 		bov_points_t* pointsDraw = bov_points_new(coord, n_points, GL_DYNAMIC_DRAW);
@@ -216,15 +235,15 @@ int main(int argc, char* argv[])
 			// get cursor position
 			glfwGetCursorPos(window->self, &x, &y);
 			// init. the message to print
-			char str[20]; // not sure if correct
-			sprintf(str, "Cursor pos. : (%f, %f)", x, y);
+			char str[30];
+			sprintf(str, "Cursor pos. : (%.3f, %.3f)", x, y);
 			hw_obj = bov_text_update(hw_obj, str);
 			bov_text_draw(window, hw_obj);
 			bov_text_draw(window, help);
 			// convex hull
 			int hull_size;
 			graham_scan(my_points, count, &hull_size, my_hull);
-			GLubyte str2[40];
+			char str2[60];
 			sprintf(str2, "Number of points: %d\nSize of the hull: %d\n", count, hull_size);
 			info = bov_text_update(info, str2);
 			bov_text_draw(window, info);
@@ -236,9 +255,6 @@ int main(int argc, char* argv[])
 			bov_fast_line_loop_draw(window, hullDraw, 0, hull_size);
 			// update
 			bov_window_update(window);
-		}
-		for (int i = 0; i < 10; i++) {
-			printf("%f, %f\n", my_points[i][0], my_points[i][1]);
 		}
 		// Free memory
 		bov_text_delete(hw_obj);
