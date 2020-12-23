@@ -29,7 +29,7 @@ where `set` describes the set on which the animation is run and can take the val
   * `1` (default) if you want to show the full animations
   * `0` if you want to show only the convex hull
  
-For instance, `myexec 1 0` will display the Graham Scan on a confused Jackie.
+For instance, `myexec 1 0` will display the Graham Scan on a confused Jackie with full animations.
  
 To **benchmark** our three algorithms with the Akl-Toussaint heuristic, please enter
 
