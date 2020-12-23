@@ -8,7 +8,7 @@ More precisely, four algorithms have been implemented:
  * Chan's Algorithm
  * Akl-Toussaint Heuristic.
  
-We mainly focused on Chan's algorithm hence we provided animations for Graham Scan and Chan's algorithm but not for Jarvis march nor Akl-Toussaint heuristic (which is not very funny to animate).
+We mainly focused on Chan's algorithm hence we provided animations for Graham Scan and Chan's algorithm but not for Jarvis march nor Akl-Toussaint heuristic (which is not very funny to animate). Akl-Toussaint result is shown in some animations with bigger points.
 
 To launch **the animations**, please enter 
 
