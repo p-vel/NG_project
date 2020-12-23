@@ -97,7 +97,7 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
 
         *hull_size = 0;
 
-		char message[34];
+		char message[60];
 		sprintf(message, "Current size of the hull: %u\nm = %d\n", *hull_size, m);
 		bov_text_t* messageDraw = bov_text_new(message, GL_DYNAMIC_DRAW);
         bov_text_set_color(messageDraw, COLOUR_WHITE);
@@ -170,7 +170,7 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
         t_prev = bov_window_get_time(window);
         t_now = bov_window_get_time(window);
 
-		char rediv_message[15];
+		char rediv_message[30];
 		sprintf(rediv_message, "Redividing...\n");
 
 		bov_text_t* rediv_messageDraw = bov_text_new(rediv_message, GL_DYNAMIC_DRAW);
