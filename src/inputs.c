@@ -1,26 +1,43 @@
 #include "inputs.h"
 
 /* extracts the data from filename */
-GLfloat** scanFile(const char* filename, int* nPoints) {
+void scanFile(const char* filename, GLfloat coord[][2], int* n_points)
+{
+	FILE* myfile = fopen(filename, "r");;
 
-	FILE* myfile;
+    int size;
+    fscanf(myfile, "%d", &size);
 
-	myfile = fopen(filename, "r");
-	int size;
-	fscanf(myfile, "%d", &size);
-
-	GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * size);
-
-	for (int i = 0; i < size; i++) {
-		fscanf(myfile, "%f", &(coord[i][0]));
-		fscanf(myfile, "%f", &(coord[i][1]));
-	}
-	fclose(myfile);
-
-	*nPoints = size;
-	return coord;
-
+    for (int i = 0; i < size; i++) {
+        GLfloat x_coord, y_coord;
+        fscanf(myfile, "%f", &x_coord);
+        fscanf(myfile, "%f", &y_coord);
+        coord[i][0] = x_coord;
+        coord[i][1] = y_coord;
+    }
+    *n_points = size;
+    fclose(myfile);
 }
+// GLfloat** scanFile(const char* filename, int* nPoints) {
+//
+// 	FILE* myfile;
+//
+// 	myfile = fopen(filename, "r");
+// 	int size;
+// 	fscanf(myfile, "%d", &size);
+//
+// 	GLfloat(*coord)[2] = malloc(sizeof(coord[0]) * size);
+//
+// 	for (int i = 0; i < size; i++) {
+// 		fscanf(myfile, "%f", &(coord[i][0]));
+// 		fscanf(myfile, "%f", &(coord[i][1]));
+// 	}
+// 	fclose(myfile);
+//
+// 	*nPoints = size;
+// 	return coord;
+//
+// }
 
 /* fonction that outputs a random value, with a
  * probability following a gaussian curve */

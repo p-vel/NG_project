@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
         printf("#################################################\n");
 
         t0 = clock();
-        akl_toussaint(coord, n_points, &rem_size);
-        graham_scan(coord, rem_size, &hull_size, hull);
+        // akl_toussaint(coord, n_points, &rem_size);
+        graham_scan(coord, n_points, &hull_size, hull);
         t1 = clock();
         elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
         printf("#################################################\n");
@@ -54,8 +54,8 @@ int main(int argc, char* argv[])
         printf("#################################################\n");
 
         t0 = clock();
-        akl_toussaint(coord, n_points, &rem_size);
-        chan(coord, rem_size, &hull_size, hull);
+        // akl_toussaint(coord, n_points, &rem_size);
+        chan(coord, n_points, &hull_size, hull);
         t1 = clock();
         elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
         printf("#################################################\n");
@@ -70,28 +70,60 @@ int main(int argc, char* argv[])
         free(hull);
     }
 
-    else {
+    else if (argc == 3){
 
-        bov_window_t* window = bov_window_new(800, 800, "Hello there Jackie");
-        bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
+        int which_set = atoi(argv[1]);
+        int which_algo = atoi(argv[2]);
+
+        bov_window_t* window = bov_window_new(-1, -1, "Hello there Jackie");
+        bov_window_set_color(window, COLOUR_MIDNIGHT_BLUE);
+        // bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
 
         // ##### Jackie w/ heuristic ######
-        int n_points = 100;
-        GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points);
+        int n_points_max = 100000;
+        int n_points;
+        GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points_max);
+
+        double scale, speed;
+        if (which_set == 0) {
+            scanFile("../small_points.txt", coord, &n_points);
+            scale = 2.0;
+            speed = 0.01;
+        }
+        else if (which_set == 1) {
+            scanFile("../JackieChanWTF.txt", coord, &n_points);
+            scale = 0.1;
+            speed = 0.01;
+        }
+        else if (which_set == 2) {
+            scanFile("../JackieChan.txt", coord, &n_points);
+            scale = 0.1;
+            speed = 0.0001;
+        }
+        else if (which_set == 3) {
+            scanFile("../tree.txt", coord, &n_points);
+            scale = 1.0;
+            speed = 1.0;
+        }
+        // int n_points = 100;
+        // GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points);
         GLfloat(*hull)[2] = malloc(sizeof(GLfloat[2]) * n_points);
         int hull_size;
 
-        random_points(coord, n_points);
-
-        // graham_scan_animation(coord, n_points, &hull_size, hull, window);
-        chan_animation(coord, n_points, &hull_size, hull, window);
+        // random_points(coord, n_points);
+        if (which_algo == 0) {
+            graham_scan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
+        }
+        else if (which_algo == 1) {
+            chan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
+        }
 
         bov_points_t* pointsDraw = bov_points_new(coord, n_points, GL_DYNAMIC_DRAW);
         bov_points_t* hullDraw = bov_points_new(hull, hull_size, GL_DYNAMIC_DRAW);
-        bov_points_set_color(pointsDraw, (GLfloat[4]) {0.0, 0.0, 0.0, 1.0});
-        bov_points_set_width(pointsDraw, 0.01);
+        bov_points_set_color(pointsDraw, COLOUR_GREEN_STYLE);
+        bov_points_set_width(pointsDraw, 0.01 * scale);
         bov_points_set_color(hullDraw, (GLfloat[4]) {1.0, 0.0, 0.0, 1.0});
-        bov_points_set_width(hullDraw, 0.01);
+        bov_points_set_width(hullDraw, 0.02 * scale);
 
         while (!bov_window_should_close(window) && glfwGetKey(window->self,GLFW_KEY_ESCAPE) != GLFW_PRESS) {
             bov_points_draw(window, pointsDraw, 0, n_points);
@@ -100,6 +132,9 @@ int main(int argc, char* argv[])
             bov_window_update(window);
         }
 
+        bov_points_delete(pointsDraw);
+        bov_points_delete(hullDraw);
+        bov_window_delete(window);
         free(coord);
         free(hull);
     }

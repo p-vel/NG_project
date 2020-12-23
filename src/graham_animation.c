@@ -48,7 +48,7 @@ int compare_animation(const void* a, const void* b)
 *   hull     : without any surprises... the future hull
 *   window   : pointer to a bov window
 */
-void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2], bov_window_t* window)
+void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2], bov_window_t* window, double scale, double speed)
 {
 
     if (n_points == 1) {
@@ -64,12 +64,12 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
     */
     bov_points_t* pointsDraw = bov_points_new(points, n_points, GL_DYNAMIC_DRAW);
     bov_points_set_color(pointsDraw, COLOUR_BLACK);
-    bov_points_set_width(pointsDraw, 0.01);
+    bov_points_set_width(pointsDraw, 0.01 * scale);
 
     t_prev = bov_window_get_time(window);
     t_now = bov_window_get_time(window);
 
-    while (t_now - t_prev < TRANSITION_TIME) {
+    while (t_now - t_prev < TRANSITION_TIME * speed) {
         bov_points_draw(window, pointsDraw, 0, n_points);
         bov_window_update(window);
         t_now = bov_window_get_time(window);
@@ -93,12 +93,12 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
     */
     bov_points_t* anchorDraw = bov_points_new(points, 1, GL_DYNAMIC_DRAW);
     bov_points_set_color(anchorDraw, COLOUR_BLUE);
-    bov_points_set_width(anchorDraw, 0.01);
+    bov_points_set_width(anchorDraw, 0.01 * scale);
 
     t_prev = bov_window_get_time(window);
     t_now = bov_window_get_time(window);
 
-    while (t_now - t_prev < TRANSITION_TIME) {
+    while (t_now - t_prev < TRANSITION_TIME * speed) {
         bov_points_draw(window, pointsDraw, 0, n_points);
         bov_points_draw(window, anchorDraw, 0, 1);
         bov_window_update(window);
@@ -116,7 +116,7 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
     */
     bov_points_t* stackDraw = bov_points_new(stack_, n_points, GL_DYNAMIC_DRAW);
     bov_points_set_color(stackDraw, COLOUR_ORANGE);
-    bov_points_set_width(stackDraw, 0.01);
+    bov_points_set_width(stackDraw, 0.01 * scale);
 
     for (int i = 0; i < n_points; i++) {
         while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) < 0)) {
@@ -125,7 +125,7 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
             t_prev = bov_window_get_time(window);
             t_now = bov_window_get_time(window);
 
-            while (t_now - t_prev < TRANSITION_TIME) {
+            while (t_now - t_prev < TRANSITION_TIME * speed) {
                 bov_points_draw(window, pointsDraw, 0, n_points);
                 bov_points_draw(window, stackDraw, 0, size(my_stack));
                 bov_fast_line_strip_draw(window, stackDraw, 0, size(my_stack));
@@ -141,7 +141,7 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
         t_prev = bov_window_get_time(window);
         t_now = bov_window_get_time(window);
 
-        while (t_now - t_prev < TRANSITION_TIME) {
+        while (t_now - t_prev < TRANSITION_TIME *speed) {
             bov_points_draw(window, pointsDraw, 0, n_points);
             bov_points_draw(window, anchorDraw, 0, 1);
             bov_points_draw(window, stackDraw, 0, size(my_stack));

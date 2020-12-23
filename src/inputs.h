@@ -9,7 +9,8 @@
 #endif
 
 /* extracts the data from filename */
-GLfloat** scanFile(const char* filename, int* nPoints);
+// GLfloat** scanFile(const char* filename, int* nPoints);
+void scanFile(const char* filename, GLfloat coords[][2], int* n_points);
 
 /* function that outputs a random value, with a
  * probability following a gaussian curve */
