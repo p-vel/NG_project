@@ -10,7 +10,20 @@ More precisely, four algorithms have been implemented:
  
 We mainly focused on Chan's algorithm hence we provided animations for Graham Scan and Chan's algorithm but not for Jarvis march nor Akl-Toussaint heuristic (which is not very funny to animate).
 
-**À COMPLÉTER AVEC UNE DESCRIPTION DU MAIN TOUT ÇA**
+To launch the animations, please enter 
+
+`myexec set algo`
+
+where `set` describes the set on which the animation is run and can take the values
+ * `0` random set of points
+ * `1` confused Jackie Chan
+ * `2` happy Jackie Chan
+ * `3` Christmas Tree 
+ 
+and `algo` is the algorithm illustrated by the animation:
+ * `0` Graham Scan
+ * `1` Chan's algorithm
+
 
 A more complete documentation for each algorithm is available in [doc/fullReadMe.md](doc/fullReadMe.md).
 
