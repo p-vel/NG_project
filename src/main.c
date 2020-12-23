@@ -128,9 +128,7 @@ int main(int argc, char* argv[])
 
 		bov_window_t* window = bov_window_new(-1, -1, "Hello there Jackie");
 		bov_window_set_color(window, COLOUR_MIDNIGHT_BLUE);
-		// bov_window_set_color(window, (GLfloat[]){0.9f, 0.85f, 0.8f, 1.0f});
 
-		// ##### Jackie w/ heuristic ######
 		int n_points_max = 100000;
 		int n_points;
 		GLfloat(*coord)[2] = malloc(sizeof(GLfloat[2]) * n_points_max);
@@ -156,6 +154,10 @@ int main(int argc, char* argv[])
 			scale = 1.0;
 			speed = (which_algo == 0) ? 0.01 : 1;
 		}
+		else {
+			printf("Please choose a valid set.\n");
+			return EXIT_SUCCESS;
+		}
 
 		GLfloat(*hull)[2] = malloc(sizeof(GLfloat[2]) * n_points);
 		int hull_size;
@@ -169,6 +171,10 @@ int main(int argc, char* argv[])
 			else if (which_algo == 1) {
 				chan_animation(coord, n_points, &hull_size, hull, window, scale, speed);
 			}
+			else {
+				printf("Please choose a valid algorithm.\n");
+				return EXIT_SUCCESS;
+			}
 		}
 
 		else if (animation_on == 0) {
@@ -180,8 +186,19 @@ int main(int argc, char* argv[])
 			else if (which_algo == 1) {
 				chan(coord, rem_points, &hull_size, hull);
 			}
+			else if (which_algo == 2) {
+				jarvis_march(coord, rem_points, &hull_size, hull);
+			}
+			else {
+				printf("Please choose a valid algorithm.\n");
+				return EXIT_SUCCESS;
+			}
 		}
 
+		else {
+			printf("Please choose a valid animation option.\n");
+			return EXIT_SUCCESS;
+		}
 		bov_points_t* pointsDraw = bov_points_new(coord, n_points, GL_DYNAMIC_DRAW);
 		bov_points_t* hullDraw = bov_points_new(hull, hull_size, GL_DYNAMIC_DRAW);
 		bov_points_set_color(pointsDraw, COLOUR_GREEN_STYLE);
