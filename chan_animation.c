@@ -17,7 +17,7 @@
 *   hull     : without any surprises... the future hull
 *
 */
-void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2], bov_window_t* window) {
+void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLfloat hull[][2], bov_window_t* window, double scale, double speed) {
     exactinit();
 
     GLfloat xp, yp;
@@ -43,15 +43,16 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
 
     bov_points_t* pointsDraw = bov_points_new(points, n_points, GL_DYNAMIC_DRAW);
     bov_points_set_color(pointsDraw, COLOUR_BLACK);
-    bov_points_set_width(pointsDraw, 0.01);
+    bov_points_set_width(pointsDraw, 0.01 * scale);
 
     bov_points_t* hullDraw = bov_points_new(points, n_points, GL_DYNAMIC_DRAW);
     bov_points_set_color(hullDraw, COLOUR_RED);
-    bov_points_set_width(hullDraw, 0.02);
+    bov_points_set_width(hullDraw, 0.05 * scale);
 
     int t = 1;
     // Main Loop
     do {
+        m =  min(pow_pow(t), n_points);
         finalM = m == n_points ? 1 : 0;
         int nHulls = n_points % m == 0 ? n_points / m : (n_points / m) + 1;
 
@@ -71,7 +72,7 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
         for (int i = 0; i < nHulls; i++) {
             subhullDraw[i] = bov_points_new(&(partition[start_indices[i]]), size_indices[i], GL_DYNAMIC_DRAW);
             bov_points_set_color(subhullDraw[i], (GLfloat[4]) {fabs(cos((float)i)),fabs(cos((float)i-M_PI/4.0)),fabs(sin((float)i)),1.0});
-            bov_points_set_width(subhullDraw[i], 0.015);
+            bov_points_set_width(subhullDraw[i], 0.015 * scale);
         }
         double t_prev, t_now;
         /*
@@ -80,7 +81,7 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
         t_prev = bov_window_get_time(window);
         t_now = bov_window_get_time(window);
 
-        while (t_now - t_prev < TRANSITION_TIME) {
+        while (t_now - t_prev < TRANSITION_TIME * speed) {
             bov_points_draw(window, pointsDraw, 0, n_points);
             for (int i = 0; i < nHulls; i++) {
                 bov_points_draw(window, subhullDraw[i], 0, size_indices[i]);
@@ -103,7 +104,7 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
             t_prev = bov_window_get_time(window);
             t_now = bov_window_get_time(window);
 
-            while (t_now - t_prev < TRANSITION_TIME) {
+            while (t_now - t_prev < TRANSITION_TIME * speed) {
                 bov_points_draw(window, pointsDraw, 0, n_points);
                 for (int i = 0; i < nHulls; i++) {
                     bov_points_draw(window, subhullDraw[i], 0, size_indices[i]);
@@ -150,8 +151,27 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
         }
         free(subhullDraw);
 
-        m =  min(pow_pow(t), n_points);
         t += 1;
+
+        bov_text_t* message = bov_text_new((GLubyte[]) {""}, GL_DYNAMIC_DRAW);
+        bov_text_set_color(message, COLOUR_WHITE);
+	   	bov_text_set_pos(message, (GLfloat[2]) {1.0, 0.9});
+        GLubyte str[20];
+        sprintf(str, "m = \%d\nRedividing...\n", m);
+        message = bov_text_update(message, str);
+
+        t_prev = bov_window_get_time(window);
+        t_now = bov_window_get_time(window);
+
+
+        while (t_now - t_prev < TRANSITION_TIME) {
+            bov_points_draw(window, pointsDraw, 0, n_points);
+            bov_text_draw(window, message);
+            bov_window_update(window);
+            t_now = bov_window_get_time(window);
+        }
+
+		bov_text_delete(message);
 
     } while (converged == 0 && !finalM);
     // Free the memory
