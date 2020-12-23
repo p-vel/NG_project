@@ -12,7 +12,7 @@ We mainly focused on Chan's algorithm hence we provided animations for Graham Sc
 
 To launch **the animations**, please enter 
 
-`myexec set algo`
+`myexec set algo anim`
 
 where `set` describes the set on which the animation is run and can take the values
  * `0` random set of points
@@ -20,17 +20,16 @@ where `set` describes the set on which the animation is run and can take the val
  * `2` happy Jackie Chan
  * `3` Christmas Tree 
  
-and `algo` is the algorithm illustrated by the animation:
+`algo` is the algorithm illustrated by the animation:
  * `0` Graham Scan
  * `1` Chan's algorithm
+ * `2` Jarvis march (not available with `anim = 1`)
  
- For instance, `myexec 1 0` will display the Graham Scan on a confused Jackie.
+ and `anim` can be set to
+  * `1` (default) if you want to show the full animations
+  * `0` if you want to show only the convex hull
  
- To show the **convex hull without animation**, please enter 
- 
- `myexec set algo 0`
- 
- where `set` and `algo` can be used as above, with a third possibility for `algo`: if set to `2`, the Jarvis March will be used to compute the convex hull.
+For instance, `myexec 1 0` will display the Graham Scan on a confused Jackie.
  
 To **benchmark** our three algorithms with the Akl-Toussaint heuristic, please enter
 
