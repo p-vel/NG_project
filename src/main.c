@@ -53,7 +53,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_C && action == GLFW_PRESS) {
 		my_points[0][0] = 0.0;  // back to one point
 		my_points[0][1] = 0.0;
-		count = 1;
+		count = 3;
 	}
 }
 
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 		double scale, speed;
 		if (which_set == 0) {
 			scanFile("../small_points.txt", coord, &n_points);
-			scale = 2.0;
+			scale = 1.0;
 			speed = 0.01;
 		}
 		else if (which_set == 1) {
@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
 			// get cursor position
 			glfwGetCursorPos(window->self, &x, &y);
 			// init. the message to print
-			char str[30];
+			char str[60];
 			sprintf(str, "Cursor pos. : (%.3f, %.3f)", x, y);
 			hw_obj = bov_text_update(hw_obj, str);
 			bov_text_draw(window, hw_obj);
