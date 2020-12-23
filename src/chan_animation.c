@@ -42,11 +42,11 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
     int* size_indices = malloc(sizeof(int) * n_points);               // stores the size of each subset (convenience)
 
     bov_points_t* pointsDraw = bov_points_new(points, n_points, GL_DYNAMIC_DRAW);
-    bov_points_set_color(pointsDraw, COLOUR_BLACK);
+    bov_points_set_color(pointsDraw, COLOUR_GREEN_STYLE);
     bov_points_set_width(pointsDraw, 0.01 * scale);
 
     bov_points_t* hullDraw = bov_points_new(points, n_points, GL_DYNAMIC_DRAW);
-    bov_points_set_color(hullDraw, COLOUR_RED);
+    bov_points_set_color(hullDraw, COLOUR_DARK_RED);
     bov_points_set_width(hullDraw, 0.05 * scale);
 
     int t = 1;
@@ -152,6 +152,25 @@ void chan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size, GLflo
         free(subhullDraw);
 
         t += 1;
+
+        bov_text_t* message = bov_text_new((GLubyte[]) {""}, GL_DYNAMIC_DRAW);
+        bov_text_set_color(message, COLOUR_WHITE);
+	   	bov_text_set_pos(message, (GLfloat[2]) {1.0, 0.9});
+        GLubyte str[20];
+        sprintf(str, "m = \%d\nRedividing...\n", m);
+        message = bov_text_update(message, str);
+
+        t_prev = bov_window_get_time(window);
+        t_now = bov_window_get_time(window);
+
+        while (t_now - t_prev < TRANSITION_TIME) {
+            bov_points_draw(window, pointsDraw, 0, n_points);
+            bov_text_draw(window, message);
+            bov_window_update(window);
+            t_now = bov_window_get_time(window);
+        }
+
+		bov_text_delete(message);
 
     } while (converged == 0 && !finalM);
     // Free the memory
