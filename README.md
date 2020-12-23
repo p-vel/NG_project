@@ -5,8 +5,10 @@ This folder contains our project on convex hulls.
 More precisely, four algorithms have been implemented:
  * Graham Scan
  * Jarvis March
- * Chan Algorithm
+ * Chan's Algorithm
  * Akl-Toussaint Heuristic.
+ 
+We mainly focused on Chan's algorithm hence we provided animations for Graham Scan and Chan's algorithm but not for Jarvis march nor Akl-Toussaint heuristic (which is not very funny to animate).
 
 **À COMPLÉTER AVEC UNE DESCRIPTION DU MAIN TOUT ÇA**
 
