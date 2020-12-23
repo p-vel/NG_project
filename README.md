@@ -1,13 +1,17 @@
 Numerical Geometry Project: Convex Hulls
 ========================================
 
-This folder contains our project on convex hulls. 
-More precisely, three algorithms have been implemented:
+This folder contains our project on convex hulls.
+More precisely, four algorithms have been implemented:
  * Graham Scan
  * Jarvis March
  * Chan Algorithm
- 
-We have also implemented the Akl-Toussaint Heuristic.
+ * Akl-Toussaint Heuristic.
+
+**À COMPLÉTER AVEC UNE DESCRIPTION DU MAIN TOUT ÇA**
+
+A more complete documentation for each algorithm is available in [doc/fullReadMe.md](doc/fullReadMe.md).
+
 
 <!--
 It should contain:
