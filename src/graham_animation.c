@@ -63,7 +63,7 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
         Start by drawing all the points (in black).
     */
     bov_points_t* pointsDraw = bov_points_new(points, n_points, GL_DYNAMIC_DRAW);
-    bov_points_set_color(pointsDraw, COLOUR_BLACK);
+    bov_points_set_color(pointsDraw, COLOUR_GREEN_STYLE);
     bov_points_set_width(pointsDraw, 0.01 * scale);
 
     t_prev = bov_window_get_time(window);
