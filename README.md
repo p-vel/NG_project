@@ -10,7 +10,7 @@ More precisely, four algorithms have been implemented:
  
 We mainly focused on Chan's algorithm hence we provided animations for Graham Scan and Chan's algorithm but not for Jarvis march nor Akl-Toussaint heuristic (which is not very funny to animate).
 
-To launch the animations, please enter 
+To launch **the animations**, please enter 
 
 `myexec set algo`
 
@@ -23,6 +23,16 @@ where `set` describes the set on which the animation is run and can take the val
 and `algo` is the algorithm illustrated by the animation:
  * `0` Graham Scan
  * `1` Chan's algorithm
+ 
+To **benchmark** our three algorithms with the Akl-Toussaint heuristic, please enter
+
+`myexec nPoints`
+
+with `nPoints` being an integer value egals to the size of a random set that will be convexhullised by our algorithms. The result of the benchmark will be displayed on the console.
+
+If you simply wants to play with our **sandbox**, please enter
+
+`myexec`
 
 
 A more complete documentation for each algorithm is available in [doc/fullReadMe.md](doc/fullReadMe.md).
