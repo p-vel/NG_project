@@ -119,7 +119,7 @@ void graham_scan_animation(GLfloat points[][2], GLsizei n_points, int* hull_size
     bov_points_set_width(stackDraw, 0.01 * scale);
 
     for (int i = 0; i < n_points; i++) {
-        while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) < 0)) {
+        while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) <= 0)) {
             pop(my_stack);
 
             t_prev = bov_window_get_time(window);

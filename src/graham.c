@@ -89,7 +89,7 @@ void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfl
     // Main loop
     struct stack* my_stack = newStack(n_points);
     for (int i = 0; i < n_points; i++) {
-            while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) < 0)) {
+            while ((size(my_stack) > 1) && (orient2d(points[nextToTop(my_stack)], points[peek(my_stack)], points[i]) <= 0)) {
                 pop(my_stack);
             }
         push(my_stack, i);
@@ -101,7 +101,6 @@ void graham_scan(GLfloat ref_points[][2], GLsizei n_points, int* hull_size, GLfl
         hull[i][1] = points[index][1];
     }
     *hull_size = size(my_stack);
-
 
     delete_st(my_stack);
     free(points);
