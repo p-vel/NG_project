@@ -80,7 +80,18 @@ int main(int argc, char* argv[])
 		// circle_points(coord, n_points);
 
 		t0 = clock();
-		jarvis_march(coord, n_points, &hull_size, hull);
+		akl_toussaint(coord, n_points, &rem_size);
+		t1 = clock();
+		elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
+		printf("#################################################\n");
+		printf("###              AKL-TOUSSAINT HEURISTIC      ###\n");
+		printf("\n");
+		printf("The number of points: %d\n", n_points);
+		printf("The number of pruned points: %d points\n", rem_size);
+		printf("The elapsed time is %.6f seconds.\n", elapsed_time);
+		printf("#################################################\n");
+		t0 = clock();
+		jarvis_march(coord, rem_size, &hull_size, hull);
 		t1 = clock();
 		elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
 		printf("#################################################\n");
@@ -92,7 +103,6 @@ int main(int argc, char* argv[])
 		printf("#################################################\n");
 
 		t0 = clock();
-		akl_toussaint(coord, n_points, &rem_size);
 		graham_scan(coord, rem_size, &hull_size, hull);
 		t1 = clock();
 		elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
@@ -105,7 +115,6 @@ int main(int argc, char* argv[])
 		printf("#################################################\n");
 
 		t0 = clock();
-		akl_toussaint(coord, n_points, &rem_size);
 		chan(coord, rem_size, &hull_size, hull);
 		t1 = clock();
 		elapsed_time = (double)(t1 - t0)/CLOCKS_PER_SEC;
@@ -203,7 +212,7 @@ int main(int argc, char* argv[])
 		bov_points_t* hullDraw = bov_points_new(hull, hull_size, GL_DYNAMIC_DRAW);
 		bov_points_set_color(pointsDraw, COLOUR_GREEN_STYLE);
 		bov_points_set_width(pointsDraw, 0.01 * scale);
-		bov_points_set_color(hullDraw, (GLfloat[4]) {1.0, 0.0, 0.0, 1.0});
+		bov_points_set_color(hullDraw, COLOUR_DARK_RED);
 		bov_points_set_width(hullDraw, 0.02 * scale);
 
 		while (!bov_window_should_close(window) && glfwGetKey(window->self,GLFW_KEY_ESCAPE) != GLFW_PRESS) {
